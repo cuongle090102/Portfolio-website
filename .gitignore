@@ -1,0 +1,244 @@
+# Portfolio Project .gitignore
+
+# ===== BACKEND (Python/Flask) =====
+
+# Virtual environments
+backend/venv/
+backend/env/
+backend/.venv/
+backend/.env/
+backend/ENV/
+backend/env.bak/
+backend/venv.bak/
+
+# Python cache
+backend/__pycache__/
+backend/*.py[cod]
+backend/*$py.class
+backend/*.so
+backend/.Python
+backend/build/
+backend/develop-eggs/
+backend/dist/
+backend/downloads/
+backend/eggs/
+backend/.eggs/
+backend/lib/
+backend/lib64/
+backend/parts/
+backend/sdist/
+backend/var/
+backend/wheels/
+backend/share/python-wheels/
+backend/*.egg-info/
+backend/.installed.cfg
+backend/*.egg
+backend/MANIFEST
+
+# Environment variables
+backend/.env
+backend/.env.local
+backend/.env.development
+backend/.env.test
+backend/.env.production
+
+# Database files
+backend/*.db
+backend/*.sqlite
+backend/*.sqlite3
+backend/instance/
+
+# Flask instance folder
+backend/instance/
+
+# Testing
+backend/.pytest_cache/
+backend/.coverage
+backend/htmlcov/
+backend/.tox/
+backend/.nox/
+backend/.coverage.*
+backend/coverage.xml
+backend/*.cover
+backend/*.py,cover
+backend/.hypothesis/
+
+# ===== FRONTEND (React/Node.js) =====
+
+# Dependencies
+frontend/node_modules/
+frontend/.pnp
+frontend/.pnp.js
+
+# Production build
+frontend/build/
+frontend/dist/
+
+# Environment variables
+frontend/.env
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+
+# Package manager logs
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/pnpm-debug.log*
+frontend/lerna-debug.log*
+
+# Runtime data
+frontend/pids
+frontend/*.pid
+frontend/*.seed
+frontend/*.pid.lock
+
+# Coverage directory used by tools like istanbul
+frontend/coverage/
+frontend/*.lcov
+
+# NYC test coverage
+frontend/.nyc_output
+
+# ESLint cache
+frontend/.eslintcache
+
+# Optional npm cache directory
+frontend/.npm
+
+# Optional eslint cache
+frontend/.eslintcache
+
+# Microbundle cache
+frontend/.rpt2_cache/
+frontend/.rts2_cache_cjs/
+frontend/.rts2_cache_es/
+frontend/.rts2_cache_umd/
+
+# Optional REPL history
+frontend/.node_repl_history
+
+# Output of 'npm pack'
+frontend/*.tgz
+
+# Yarn Integrity file
+frontend/.yarn-integrity
+
+# parcel-bundler cache (https://parceljs.org/)
+frontend/.cache
+frontend/.parcel-cache
+
+# Next.js build output
+frontend/.next
+frontend/out
+
+# Nuxt.js build / generate output
+frontend/.nuxt
+frontend/dist
+
+# Gatsby files
+frontend/.cache/
+frontend/public
+
+# Storybook build outputs
+frontend/.out
+frontend/.storybook-out
+
+# Temporary folders
+frontend/tmp/
+frontend/temp/
+
+# ===== GENERAL =====
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Log files
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+
+# Archive files
+*.zip
+*.tar.gz
+*.rar
+
+# ===== DEPLOYMENT =====
+
+# Deployment files
+.vercel
+.netlify
+
+# Docker
+Dockerfile.prod
+docker-compose.prod.yml
+
+# ===== PROJECT SPECIFIC =====
+
+# Uploaded files (if storing locally)
+uploads/
+media/
+
+# Backup files
+*.bak
+*.backup
+
+# Config files with sensitive data
+config.ini
+secrets.json
+
+# Documentation build
+docs/_build/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Celery stuff
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# pytype static type analyzer
+.pytype/
+
+# Cython debug symbols
+cython_debug/
+
+*.pyc
