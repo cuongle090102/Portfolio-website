@@ -21,7 +21,18 @@ def create_app():
     
     # Initialize extensions with app
     db.init_app(app)
-    CORS(app, origins=[os.getenv('FRONTEND_URL', 'http://localhost:3000')])
+    
+    # Configure CORS for development
+    frontend_urls = [
+        os.getenv('FRONTEND_URL', 'http://localhost:3000'),
+        'http://localhost:3000',
+        'http://localhost:3001',
+        'http://localhost:3002',
+        'http://localhost:3003',
+        'http://localhost:3004',
+        'http://localhost:3005'
+    ]
+    CORS(app, origins=frontend_urls, supports_credentials=True)
     
     # Configure Cloudinary
     cloudinary.config(

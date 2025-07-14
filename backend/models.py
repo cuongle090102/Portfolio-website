@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Text, DateTime, Boolean, JSON
 from datetime import datetime
-from app import db
+from database import db
 
 class Project(db.Model):
     __tablename__ = 'projects'
