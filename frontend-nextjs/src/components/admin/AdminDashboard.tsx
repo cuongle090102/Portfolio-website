@@ -6,17 +6,31 @@ import { ArrowRightOnRectangleIcon, PlusIcon, PencilIcon, TrashIcon, EyeIcon } f
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
+import BlockEditor from './BlockEditor';
+
+interface Block {
+  id: string;
+  type: 'text' | 'heading' | 'subheading' | 'image' | 'video';
+  content: string;
+  metadata?: any;
+}
 
 interface Project {
   id: number;
   title: string;
   description: string;
   content?: string;
+  blocks?: Block[];
   technologies?: string;
   demo_url?: string;
   github_url?: string;
   image_url?: string;
   status: string;
+  media?: Array<{
+    type: string;
+    url: string;
+    caption: string;
+  }>;
 }
 
 export default function AdminDashboard() {
@@ -35,7 +49,14 @@ export default function AdminDashboard() {
   const fetchProjects = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${API_BASE_URL}/api/projects`);
+      const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') : null;
+      const config = token ? {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      } : {};
+      
+      const response = await axios.get(`${API_BASE_URL}/api/projects/?status=`, config);
       setProjects(response.data);
     } catch (error) {
       console.error('Error fetching projects:', error);
@@ -49,7 +70,14 @@ export default function AdminDashboard() {
     if (!confirm('Are you sure you want to delete this project?')) return;
 
     try {
-      await axios.delete(`${API_BASE_URL}/api/projects/${projectId}`);
+      const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') : null;
+      const config = {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      };
+      
+      await axios.delete(`${API_BASE_URL}/api/admin/projects/${projectId}`, config);
       toast.success('Project deleted successfully');
       fetchProjects();
     } catch (error) {
@@ -132,12 +160,33 @@ export default function AdminDashboard() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {projects.map((project) => (
                   <div key={project.id} className="bg-white rounded-lg shadow-md overflow-hidden">
-                    {project.image_url && (
-                      <img
-                        src={project.image_url}
-                        alt={project.title}
-                        className="w-full h-48 object-cover"
-                      />
+                    {project.image_url ? (
+                      <div className="w-full h-48 bg-gray-200 flex items-center justify-center overflow-hidden">
+                        <img
+                          src={project.image_url}
+                          alt={project.title}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = 'none';
+                            target.parentElement!.innerHTML = `
+                              <div class="flex flex-col items-center justify-center h-full text-gray-500">
+                                <svg class="w-12 h-12 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                                <span class="text-sm">Image not available</span>
+                              </div>
+                            `;
+                          }}
+                        />
+                      </div>
+                    ) : (
+                      <div className="w-full h-48 bg-gray-200 flex flex-col items-center justify-center text-gray-500">
+                        <svg className="w-12 h-12 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                        <span className="text-sm">No image</span>
+                      </div>
                     )}
                     <div className="p-6">
                       <div className="flex justify-between items-start mb-2">
@@ -229,31 +278,72 @@ function ProjectForm({ project, onClose, onSave }: ProjectFormProps) {
   const [formData, setFormData] = useState({
     title: project?.title || '',
     description: project?.description || '',
-    content: project?.content || '',
+    thumbnail: project?.image_url || '',
     technologies: project?.technologies || '',
-    demo_url: project?.demo_url || '',
-    github_url: project?.github_url || '',
-    image_url: project?.image_url || '',
     status: project?.status || 'draft'
   });
 
+  const [contentBlocks, setContentBlocks] = useState<Block[]>(() => {
+    if (project?.blocks) {
+      return project.blocks;
+    } else if (project?.content) {
+      // Convert legacy content to blocks
+      return [{ id: '1', type: 'text', content: project.content }];
+    } else {
+      return [{ id: '1', type: 'text', content: '' }];
+    }
+  });
+
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:5000';
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     try {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') : null;
+      console.log('DEBUG: Token from localStorage:', token ? `${token.substring(0, 50)}...` : 'null');
+      
+      // Format data for admin endpoint
+      const adminFormData = {
+        title: formData.title,
+        short_description: formData.description,
+        blocks: contentBlocks,
+        technologies: formData.technologies ? formData.technologies.split(',').map(t => t.trim()) : [],
+        status: formData.status,
+        image_url: formData.thumbnail || null,
+        media: formData.thumbnail ? [{ 
+          type: 'image', 
+          url: formData.thumbnail, 
+          caption: 'Thumbnail' 
+        }] : []
+      };
+
+      const config = {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      };
+
+      console.log('DEBUG: Request config:', config);
+      console.log('DEBUG: Request data:', adminFormData);
+
       if (project) {
-        await axios.put(`${API_BASE_URL}/api/projects/${project.id}`, formData);
+        await axios.put(`${API_BASE_URL}/api/admin/projects/${project.id}`, adminFormData, config);
         toast.success('Project updated successfully');
       } else {
-        await axios.post(`${API_BASE_URL}/api/projects`, formData);
+        console.log('DEBUG: Making POST request to:', `${API_BASE_URL}/api/admin/projects`);
+        await axios.post(`${API_BASE_URL}/api/admin/projects`, adminFormData, config);
         toast.success('Project created successfully');
       }
       onSave();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving project:', error);
-      toast.error('Failed to save project');
+      console.error('Error response:', error.response?.data);
+      console.error('Error status:', error.response?.status);
+      console.error('Error headers:', error.response?.headers);
+      toast.error('Failed to save project: ' + (error.response?.data?.error || error.message));
     }
   };
 
@@ -296,32 +386,74 @@ function ProjectForm({ project, onClose, onSave }: ProjectFormProps) {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Status
+              Description
             </label>
-            <select
-              name="status"
-              value={formData.status}
+            <textarea
+              name="description"
+              value={formData.description}
               onChange={handleChange}
+              placeholder="Brief description of the project"
+              rows={3}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="draft">Draft</option>
-              <option value="published">Published</option>
-            </select>
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              This will be displayed on the project card.
+            </p>
           </div>
         </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Description *
+            Status
           </label>
-          <textarea
-            name="description"
-            value={formData.description}
+          <select
+            name="status"
+            value={formData.status}
             onChange={handleChange}
-            required
-            rows={3}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="draft">Draft</option>
+            <option value="completed">Completed</option>
+            <option value="published">Published</option>
+          </select>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Thumbnail Image
+          </label>
+          <input
+            type="url"
+            name="thumbnail"
+            value={formData.thumbnail}
+            onChange={handleChange}
+            placeholder="https://example.com/thumbnail.jpg"
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
+          {formData.thumbnail && (
+            <div className="mt-2 w-full max-w-md bg-gray-200 rounded-lg overflow-hidden">
+              <img
+                src={formData.thumbnail}
+                alt="Thumbnail preview"
+                className="w-full h-48 object-cover"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.style.display = 'none';
+                  target.parentElement!.innerHTML = `
+                    <div class="flex flex-col items-center justify-center h-48 text-gray-500">
+                      <svg class="w-12 h-12 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 002 2v12a2 2 0 002 2z"></path>
+                      </svg>
+                      <span class="text-sm">Image not available</span>
+                    </div>
+                  `;
+                }}
+              />
+            </div>
+          )}
+          <p className="text-xs text-gray-500 mt-1">
+            Use direct image URLs (ending in .jpg, .png, .webp, etc.). This will be used as the main project thumbnail.
+          </p>
         </div>
 
         <div>
@@ -333,63 +465,18 @@ function ProjectForm({ project, onClose, onSave }: ProjectFormProps) {
             name="technologies"
             value={formData.technologies}
             onChange={handleChange}
-            placeholder="React, Node.js, Python"
+            placeholder="React, Node.js, Python, Angular, TypeScript"
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Demo URL
-            </label>
-            <input
-              type="url"
-              name="demo_url"
-              value={formData.demo_url}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              GitHub URL
-            </label>
-            <input
-              type="url"
-              name="github_url"
-              value={formData.github_url}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
+          <p className="text-xs text-gray-500 mt-1">
+            Enter technologies separated by commas. Each will be displayed with a different color on the project card.
+          </p>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Image URL
-          </label>
-          <input
-            type="url"
-            name="image_url"
-            value={formData.image_url}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Project Details
-          </label>
-          <textarea
-            name="content"
-            value={formData.content}
-            onChange={handleChange}
-            rows={6}
-            placeholder="Detailed description of the project..."
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          <BlockEditor 
+            initialBlocks={contentBlocks}
+            onChange={setContentBlocks}
           />
         </div>
 

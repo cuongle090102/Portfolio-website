@@ -39,16 +39,29 @@ def get_projects():
         
         projects = query.all()
         
+        def get_blocks(project):
+            try:
+                import json
+                if project.full_description and project.full_description.startswith('['):
+                    return json.loads(project.full_description)
+                else:
+                    # Legacy content - convert to block format
+                    return [{'id': '1', 'type': 'text', 'content': project.full_description or ''}]
+            except:
+                return [{'id': '1', 'type': 'text', 'content': project.full_description or ''}]
+
         return jsonify([{
             'id': p.id,
             'title': p.title,
             'description': p.short_description,
             'content': p.full_description,
+            'blocks': get_blocks(p),
             'technologies': ','.join(p.technologies) if p.technologies else '',
             'demo_url': p.links.get('demo', '') if p.links else '',
             'github_url': p.links.get('github', '') if p.links else '',
             'image_url': p.media[0]['url'] if p.media and len(p.media) > 0 else '',
             'status': p.status,
+            'media': p.media,
             'created_at': p.created_at.isoformat() if p.created_at else None
         } for p in projects])
         

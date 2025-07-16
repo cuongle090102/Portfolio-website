@@ -42,7 +42,7 @@ def admin_login():
 
 @admin_bp.route('/projects', methods=['POST'])
 @token_required
-def create_project():
+def create_project(current_user):
     """Create new project"""
     try:
         data = request.get_json()
@@ -74,6 +74,30 @@ def create_project():
             order=data.get('order', 0)
         )
         
+        # Handle blocks field (store as JSON in full_description for now)
+        if data.get('blocks'):
+            import json
+            project.full_description = json.dumps(data['blocks'])
+        
+        # Handle image_url field for backward compatibility
+        if data.get('image_url'):
+            # Add/update main image in media array
+            if not project.media:
+                project.media = []
+            # Update first media item or add new one
+            if project.media:
+                project.media[0] = {
+                    'type': 'image',
+                    'url': data['image_url'],
+                    'caption': 'Thumbnail'
+                }
+            else:
+                project.media.append({
+                    'type': 'image',
+                    'url': data['image_url'],
+                    'caption': 'Thumbnail'
+                })
+        
         db.session.add(project)
         db.session.commit()
         
@@ -92,7 +116,7 @@ def create_project():
 
 @admin_bp.route('/projects/<int:id>', methods=['PUT'])
 @token_required
-def update_project(id):
+def update_project(current_user, id):
     """Update existing project"""
     try:
         project = Project.query.get(id)
@@ -127,6 +151,35 @@ def update_project(id):
             project.status = data['status']
         if 'order' in data:
             project.order = data['order']
+            
+        # Handle blocks field (store as JSON in full_description)
+        if 'blocks' in data:
+            import json
+            project.full_description = json.dumps(data['blocks'])
+        
+        # Handle image_url field for backward compatibility
+        if 'image_url' in data:
+            if not project.media:
+                project.media = []
+            
+            if data['image_url']:
+                # Update first media item or add new one
+                if project.media:
+                    project.media[0] = {
+                        'type': 'image',
+                        'url': data['image_url'],
+                        'caption': 'Thumbnail'
+                    }
+                else:
+                    project.media.append({
+                        'type': 'image',
+                        'url': data['image_url'],
+                        'caption': 'Thumbnail'
+                    })
+            else:
+                # Remove image if empty
+                if project.media:
+                    project.media = []
         
         project.updated_at = datetime.utcnow()
         db.session.commit()
@@ -142,7 +195,7 @@ def update_project(id):
 
 @admin_bp.route('/projects/<int:id>', methods=['DELETE'])
 @token_required
-def delete_project(id):
+def delete_project(current_user, id):
     """Delete project"""
     try:
         project = Project.query.get(id)
@@ -166,7 +219,7 @@ def delete_project(id):
 
 @admin_bp.route('/upload', methods=['POST'])
 @token_required
-def upload_media():
+def upload_media(current_user):
     """Upload media files to Cloudinary"""
     try:
         if 'file' not in request.files:
@@ -190,7 +243,7 @@ def upload_media():
 
 @admin_bp.route('/upload-multiple', methods=['POST'])
 @token_required
-def upload_multiple_media():
+def upload_multiple_media(current_user):
     """Upload multiple media files"""
     try:
         files = request.files.getlist('files')
@@ -213,7 +266,7 @@ def upload_multiple_media():
 
 @admin_bp.route('/contacts', methods=['GET'])
 @token_required
-def get_contacts():
+def get_contacts(current_user):
     """Get all contact messages"""
     try:
         status = request.args.get('status')
@@ -239,7 +292,7 @@ def get_contacts():
 
 @admin_bp.route('/contacts/<int:id>/status', methods=['PUT'])
 @token_required
-def update_contact_status(id):
+def update_contact_status(current_user, id):
     """Update contact message status"""
     try:
         contact = Contact.query.get(id)
@@ -263,7 +316,7 @@ def update_contact_status(id):
 
 @admin_bp.route('/skills', methods=['POST'])
 @token_required
-def create_skill():
+def create_skill(current_user):
     """Create new skill"""
     try:
         data = request.get_json()
@@ -289,7 +342,7 @@ def create_skill():
 
 @admin_bp.route('/skills/<int:id>', methods=['DELETE'])
 @token_required
-def delete_skill(id):
+def delete_skill(current_user, id):
     """Delete skill"""
     try:
         skill = Skill.query.get(id)
