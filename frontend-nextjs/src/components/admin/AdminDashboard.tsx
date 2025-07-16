@@ -3,10 +3,10 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { ArrowRightOnRectangleIcon, PlusIcon, PencilIcon, TrashIcon, EyeIcon } from '@heroicons/react/24/outline';
-import axios from 'axios';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
 import BlockEditor from './BlockEditor';
+import { apiClient } from '@/lib/api';
 
 interface Block {
   id: string;
@@ -49,14 +49,7 @@ export default function AdminDashboard() {
   const fetchProjects = async () => {
     try {
       setLoading(true);
-      const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') : null;
-      const config = token ? {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      } : {};
-      
-      const response = await axios.get(`${API_BASE_URL}/api/projects/?status=`, config);
+      const response = await apiClient.getProjects();
       setProjects(response.data);
     } catch (error) {
       console.error('Error fetching projects:', error);
@@ -71,13 +64,7 @@ export default function AdminDashboard() {
 
     try {
       const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') : null;
-      const config = {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      };
-      
-      await axios.delete(`${API_BASE_URL}/api/admin/projects/${projectId}`, config);
+      await apiClient.deleteProject(projectId, token || '');
       toast.success('Project deleted successfully');
       fetchProjects();
     } catch (error) {
@@ -330,11 +317,10 @@ function ProjectForm({ project, onClose, onSave }: ProjectFormProps) {
       console.log('DEBUG: Request data:', adminFormData);
 
       if (project) {
-        await axios.put(`${API_BASE_URL}/api/admin/projects/${project.id}`, adminFormData, config);
+        await apiClient.updateProject(project.id, adminFormData, token || '');
         toast.success('Project updated successfully');
       } else {
-        console.log('DEBUG: Making POST request to:', `${API_BASE_URL}/api/admin/projects`);
-        await axios.post(`${API_BASE_URL}/api/admin/projects`, adminFormData, config);
+        await apiClient.createProject(adminFormData, token || '');
         toast.success('Project created successfully');
       }
       onSave();

@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import axios from 'axios';
+import { apiClient } from '@/lib/api';
 
 interface User {
   id: number;
@@ -42,11 +42,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }, []);
 
   const checkAuthStatus = () => {
-    const token = localStorage.getItem('authToken');
-    if (token) {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      setIsAuthenticated(true);
-      setUser({ id: 1, username: 'admin' });
+    // Only check localStorage on client side
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('authToken');
+      if (token) {
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        setIsAuthenticated(true);
+        setUser({ id: 1, username: 'admin' });
+      }
     }
     setIsLoading(false);
   };
@@ -56,14 +59,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setIsLoading(true);
       console.log('Attempting login to:', `${API_BASE_URL}/api/admin/login`);
       
-      const response = await axios.post(`${API_BASE_URL}/api/admin/login`, {
-        password
-      });
+      const response = await apiClient.loginAdmin(password);
       
       console.log('Login response:', response.data);
       
       const { token } = response.data;
-      localStorage.setItem('authToken', token);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('authToken', token);
+      }
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       
       setIsAuthenticated(true);
@@ -83,7 +86,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   const logout = () => {
-    localStorage.removeItem('authToken');
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('authToken');
+    }
     delete axios.defaults.headers.common['Authorization'];
     setIsAuthenticated(false);
     setUser(null);

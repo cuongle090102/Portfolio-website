@@ -38,20 +38,28 @@ def token_required(f):
     def decorated_function(*args, **kwargs):
         token = None
         
+        print(f"DEBUG: Headers received: {dict(request.headers)}")
+        
         # Get token from header
         if 'Authorization' in request.headers:
             auth_header = request.headers['Authorization']
+            print(f"DEBUG: Authorization header: {auth_header}")
             try:
                 token = auth_header.split(' ')[1]  # Bearer <token>
+                print(f"DEBUG: Extracted token: {token[:50]}...")
             except IndexError:
+                print("DEBUG: Invalid token format")
                 return jsonify({'error': 'Invalid token format'}), 401
         
         if not token:
+            print("DEBUG: Token is missing")
             return jsonify({'error': 'Token is missing'}), 401
         
         # Verify token
         payload = verify_token(token)
+        print(f"DEBUG: Token payload: {payload}")
         if payload is None:
+            print("DEBUG: Token is invalid or expired")
             return jsonify({'error': 'Token is invalid or expired'}), 401
         
         # Add user data to request

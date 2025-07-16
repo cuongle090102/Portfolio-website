@@ -2,9 +2,9 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { ArrowTopRightOnSquareIcon, CodeBracketIcon, ArrowLeftIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
-import axios from 'axios';
 import Link from 'next/link';
 import BlockRenderer from '@/components/BlockRenderer';
+import { apiClient } from '@/lib/api';
 
 interface Block {
   id: string;
@@ -114,7 +114,7 @@ export default function ProjectsPage() {
   const fetchProjects = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${API_BASE_URL}/api/projects/`);
+      const response = await apiClient.getProjects();
       const publishedProjects = response.data.filter((project: Project) => 
         project.status === 'published' || project.status === 'completed'
       );
