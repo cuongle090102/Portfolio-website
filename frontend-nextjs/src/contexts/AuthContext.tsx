@@ -46,7 +46,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     if (typeof window !== 'undefined') {
       const token = localStorage.getItem('authToken');
       if (token) {
-        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         setIsAuthenticated(true);
         setUser({ id: 1, username: 'admin' });
       }
@@ -67,7 +66,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       if (typeof window !== 'undefined') {
         localStorage.setItem('authToken', token);
       }
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       
       setIsAuthenticated(true);
       setUser({ id: 1, username: 'admin' });
@@ -89,7 +87,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     if (typeof window !== 'undefined') {
       localStorage.removeItem('authToken');
     }
-    delete axios.defaults.headers.common['Authorization'];
     setIsAuthenticated(false);
     setUser(null);
   };
