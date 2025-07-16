@@ -92,6 +92,26 @@ export default function ProjectsPage() {
     fetchProjects();
   }, []);
 
+  // Handle ESC key to close modal
+  useEffect(() => {
+    const handleEscKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && selectedProject) {
+        setSelectedProject(null);
+      }
+    };
+
+    if (selectedProject) {
+      document.addEventListener('keydown', handleEscKey);
+      // Prevent body scroll when modal is open
+      document.body.style.overflow = 'hidden';
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscKey);
+      document.body.style.overflow = 'unset';
+    };
+  }, [selectedProject]);
+
   useEffect(() => {
     // Add CSS to hide scrollbar
     const style = document.createElement('style');
@@ -170,6 +190,9 @@ export default function ProjectsPage() {
               </Link>
               <Link href="/projects" className="text-gray-900 hover:text-blue-600 px-3 py-2 text-sm font-medium">
                 Projects
+              </Link>
+              <Link href="/favorites" className="text-gray-500 hover:text-blue-600 px-3 py-2 text-sm font-medium">
+                Favorites
               </Link>
               <Link href="/admin" className="text-gray-500 hover:text-blue-600 px-3 py-2 text-sm font-medium">
                 Admin
@@ -338,8 +361,14 @@ export default function ProjectsPage() {
 
       {/* Project Detail Modal */}
       {selectedProject && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-          <div className="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white">
+        <div 
+          className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50"
+          onClick={() => setSelectedProject(null)}
+        >
+          <div 
+            className="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="mt-3">
               <div className="flex justify-between items-start mb-4">
                 <div className="flex-1 text-center">

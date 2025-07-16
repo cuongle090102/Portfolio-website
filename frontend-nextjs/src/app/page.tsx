@@ -1,6 +1,10 @@
+'use client'
+
 import Link from 'next/link'
+import { useAuth } from '@/contexts/AuthContext'
 
 export default function HomePage() {
+  const { isAuthenticated, logout } = useAuth();
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Navigation */}
@@ -17,9 +21,26 @@ export default function HomePage() {
               <Link href="/projects" className="text-gray-500 hover:text-blue-600 px-3 py-2 text-sm font-medium">
                 Projects
               </Link>
-              <Link href="/admin" className="text-gray-500 hover:text-blue-600 px-3 py-2 text-sm font-medium">
-                Admin
+              <Link href="/favorites" className="text-gray-500 hover:text-blue-600 px-3 py-2 text-sm font-medium">
+                Favorites
               </Link>
+              {isAuthenticated ? (
+                <div className="flex space-x-4">
+                  <Link href="/admin" className="text-gray-500 hover:text-blue-600 px-3 py-2 text-sm font-medium">
+                    Admin Dashboard
+                  </Link>
+                  <button
+                    onClick={logout}
+                    className="text-gray-500 hover:text-red-600 px-3 py-2 text-sm font-medium"
+                  >
+                    Logout
+                  </button>
+                </div>
+              ) : (
+                <Link href="/admin" className="text-gray-500 hover:text-blue-600 px-3 py-2 text-sm font-medium">
+                  Admin
+                </Link>
+              )}
             </div>
           </div>
         </div>
@@ -43,12 +64,21 @@ export default function HomePage() {
               >
                 View My Projects
               </Link>
-              <Link
-                href="/admin"
-                className="bg-white text-gray-700 px-8 py-3 rounded-lg font-medium border border-gray-300 hover:bg-gray-50 transition-colors"
-              >
-                Admin Dashboard
-              </Link>
+              {isAuthenticated ? (
+                <Link
+                  href="/admin"
+                  className="bg-white text-gray-700 px-8 py-3 rounded-lg font-medium border border-gray-300 hover:bg-gray-50 transition-colors"
+                >
+                  Admin Dashboard
+                </Link>
+              ) : (
+                <Link
+                  href="/admin"
+                  className="bg-white text-gray-700 px-8 py-3 rounded-lg font-medium border border-gray-300 hover:bg-gray-50 transition-colors"
+                >
+                  Admin Login
+                </Link>
+              )}
             </div>
           </div>
         </div>

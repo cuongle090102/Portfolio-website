@@ -41,13 +41,34 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     checkAuthStatus();
   }, []);
 
-  const checkAuthStatus = () => {
+  const checkAuthStatus = async () => {
     // Only check localStorage on client side
     if (typeof window !== 'undefined') {
       const token = localStorage.getItem('authToken');
       if (token) {
-        setIsAuthenticated(true);
-        setUser({ id: 1, username: 'admin' });
+        try {
+          // Verify token with backend
+          const response = await fetch(`${API_BASE_URL}/api/admin/verify`, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+          
+          if (response.ok) {
+            setIsAuthenticated(true);
+            setUser({ id: 1, username: 'admin' });
+          } else {
+            // Token is invalid, remove it
+            localStorage.removeItem('authToken');
+            setIsAuthenticated(false);
+            setUser(null);
+          }
+        } catch (error) {
+          // Network error or token invalid
+          localStorage.removeItem('authToken');
+          setIsAuthenticated(false);
+          setUser(null);
+        }
       }
     }
     setIsLoading(false);

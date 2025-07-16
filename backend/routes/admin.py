@@ -40,6 +40,19 @@ def admin_login():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@admin_bp.route('/verify', methods=['GET'])
+@token_required
+def verify_token(current_user):
+    """Verify admin token"""
+    try:
+        return jsonify({
+            'valid': True,
+            'user': current_user,
+            'message': 'Token is valid'
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 @admin_bp.route('/projects', methods=['POST'])
 @token_required
 def create_project(current_user):
