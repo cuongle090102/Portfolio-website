@@ -317,7 +317,9 @@ export default function FavoritesPage() {
                       </>
                     )}
                     <div 
-                      ref={(el) => scrollRefs.current[tierId] = el}
+                      ref={(el) => {
+                        scrollRefs.current[tierId] = el;
+                      }}
                       className={`${showSlider ? 'flex overflow-x-auto scrollbar-hide' : 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6'} gap-3`}
                       style={showSlider ? { scrollbarWidth: 'none', msOverflowStyle: 'none' } : {}}
                     >
@@ -390,7 +392,9 @@ export default function FavoritesPage() {
                       </>
                     )}
                     <div 
-                      ref={(el) => scrollRefs.current[tierId] = el}
+                      ref={(el) => {
+                        scrollRefs.current[tierId] = el;
+                      }}
                       className={`${showSlider ? 'flex overflow-x-auto scrollbar-hide' : 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6'} gap-3`}
                       style={showSlider ? { scrollbarWidth: 'none', msOverflowStyle: 'none' } : {}}
                     >
