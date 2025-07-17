@@ -176,67 +176,57 @@ export default function ProjectsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white text-black">
       {/* Navigation */}
-      <nav className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex-shrink-0">
-              <h1 className="text-xl font-bold text-gray-900">My Portfolio</h1>
-            </div>
-            <div className="flex space-x-8">
-              <Link href="/" className="text-gray-500 hover:text-blue-600 px-3 py-2 text-sm font-medium">
-                Home
-              </Link>
-              <Link href="/projects" className="text-gray-900 hover:text-blue-600 px-3 py-2 text-sm font-medium">
-                Projects
-              </Link>
-              <Link href="/favorites" className="text-gray-500 hover:text-blue-600 px-3 py-2 text-sm font-medium">
-                Favorites
-              </Link>
-              <Link href="/admin" className="text-gray-500 hover:text-blue-600 px-3 py-2 text-sm font-medium">
-                Admin
-              </Link>
-            </div>
+      <nav className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50">
+        <div className="bg-white/80 backdrop-blur-md border border-gray-200 rounded-full px-6 py-3 shadow-lg">
+          <div className="flex items-center space-x-6">
+            <Link href="/" className="text-black hover:text-gray-600 transition-colors text-sm">
+              Index
+            </Link>
+            <div className="w-px h-4 bg-gray-300"></div>
+            <Link href="/projects" className="text-black hover:text-gray-600 transition-colors text-sm">
+              Work
+            </Link>
+            <div className="w-px h-4 bg-gray-300"></div>
+            <Link href="/favorites" className="text-black hover:text-gray-600 transition-colors text-sm">
+              Favorites
+            </Link>
+            <div className="w-px h-4 bg-gray-300"></div>
+            <Link href="/admin" className="text-black hover:text-gray-600 transition-colors text-sm">
+              Admin
+            </Link>
           </div>
         </div>
       </nav>
 
       {/* Header */}
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex flex-col items-center text-center">
-            <div className="w-full flex justify-start mb-4">
-              <Link
-                href="/"
-                className="flex items-center text-blue-600 hover:text-blue-500"
-              >
-                <ArrowLeftIcon className="h-4 w-4 mr-1" />
-                Back to Home
-              </Link>
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">My Projects</h1>
-              <p className="mt-2 text-gray-600">
-                A showcase of my work and technical expertise
-              </p>
-            </div>
+      <header className="pt-32 pb-16">
+        <div className="max-w-6xl mx-auto px-6 lg:px-8">
+          <div className="text-center">
+            <h1 className="text-6xl font-bold text-black mb-8 leading-tight">
+              Selected Work
+            </h1>
+            <p className="text-xl text-gray-700 max-w-3xl mx-auto leading-relaxed">
+              A curated collection of data science projects showcasing expertise in 
+              machine learning, analytics, and intelligent automation.
+            </p>
           </div>
         </div>
       </header>
 
       {/* Projects Grid */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <main className="max-w-6xl mx-auto px-6 lg:px-8 pb-32">
         {projects.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="w-24 h-24 mx-auto bg-gray-100 rounded-full flex items-center justify-center mb-4">
+          <div className="text-center py-24">
+            <div className="w-24 h-24 mx-auto bg-gray-100 rounded-lg flex items-center justify-center mb-6">
               <CodeBracketIcon className="h-12 w-12 text-gray-400" />
             </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No projects yet</h3>
-            <p className="text-gray-500 mb-6">Projects will appear here once they are published</p>
+            <h3 className="text-2xl font-bold text-black mb-4">No projects yet</h3>
+            <p className="text-gray-600 mb-8">Projects will appear here once they are published</p>
             <Link
               href="/admin"
-              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+              className="inline-flex items-center bg-black text-white px-8 py-3 font-medium hover:bg-gray-900 transition-colors"
             >
               Add Your First Project
             </Link>
@@ -269,7 +259,7 @@ export default function ProjectsPage() {
               {projects.map((project) => (
                 <div
                   key={project.id}
-                  className={`bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 cursor-pointer ${
+                  className={`bg-white border border-gray-200 overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer ${
                     projects.length > 3 ? 'min-w-[350px] max-w-[350px]' : 'w-full max-w-[350px]'
                   }`}
                   onClick={() => setSelectedProject(project)}
@@ -331,7 +321,7 @@ export default function ProjectsPage() {
                           href={project.demo_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+                          className="inline-flex items-center px-4 py-2 bg-black text-white text-sm font-medium hover:bg-gray-900 transition-colors"
                           onClick={(e) => e.stopPropagation()}
                         >
                           <ArrowTopRightOnSquareIcon className="h-4 w-4 mr-1" />
@@ -343,7 +333,7 @@ export default function ProjectsPage() {
                           href={project.github_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                          className="inline-flex items-center px-4 py-2 border border-black text-black text-sm font-medium hover:bg-black hover:text-white transition-colors"
                           onClick={(e) => e.stopPropagation()}
                         >
                           <CodeBracketIcon className="h-4 w-4 mr-1" />

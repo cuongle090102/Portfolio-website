@@ -214,92 +214,96 @@ export default function FavoritesPage() {
   }
 
   const getTierColor = (tier: string) => {
-    if (tier.includes('S-Tier')) return 'bg-gradient-to-r from-yellow-400 to-orange-500'
-    if (tier.includes('A-Tier')) return 'bg-gradient-to-r from-red-500 to-pink-500'
-    if (tier.includes('B-Tier')) return 'bg-gradient-to-r from-blue-500 to-purple-500'
-    if (tier.includes('C-Tier')) return 'bg-gradient-to-r from-green-500 to-teal-500'
+    if (tier.includes('S-Tier')) return 'bg-black'
+    if (tier.includes('A-Tier')) return 'bg-gray-800'
+    if (tier.includes('B-Tier')) return 'bg-gray-600'
+    if (tier.includes('C-Tier')) return 'bg-gray-400'
     return 'bg-gray-500'
   }
 
   const getTierTextColor = (tier: string) => {
+    if (tier.includes('C-Tier')) return 'text-black'
     return 'text-white'
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white text-black">
       {/* Navigation */}
-      <nav className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex-shrink-0">
-              <Link href="/" className="text-xl font-bold text-gray-900">My Portfolio</Link>
-            </div>
-            <div className="flex space-x-8">
-              <Link href="/" className="text-gray-500 hover:text-blue-600 px-3 py-2 text-sm font-medium">
-                Home
-              </Link>
-              <Link href="/projects" className="text-gray-500 hover:text-blue-600 px-3 py-2 text-sm font-medium">
-                Projects
-              </Link>
-              <Link href="/favorites" className="text-gray-900 hover:text-blue-600 px-3 py-2 text-sm font-medium">
-                Favorites
-              </Link>
-            </div>
+      <nav className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50">
+        <div className="bg-white/80 backdrop-blur-md border border-gray-200 rounded-full px-6 py-3 shadow-lg">
+          <div className="flex items-center space-x-6">
+            <Link href="/" className="text-black hover:text-gray-600 transition-colors text-sm">
+              Index
+            </Link>
+            <div className="w-px h-4 bg-gray-300"></div>
+            <Link href="/projects" className="text-black hover:text-gray-600 transition-colors text-sm">
+              Work
+            </Link>
+            <div className="w-px h-4 bg-gray-300"></div>
+            <Link href="/favorites" className="text-black hover:text-gray-600 transition-colors text-sm">
+              Favorites
+            </Link>
+            <div className="w-px h-4 bg-gray-300"></div>
+            <Link href="/admin" className="text-black hover:text-gray-600 transition-colors text-sm">
+              Admin
+            </Link>
           </div>
         </div>
       </nav>
 
       {/* Header */}
-      <section className="bg-white border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <section className="pt-32 pb-16">
+        <div className="max-w-6xl mx-auto px-6 lg:px-8">
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">My Favorites</h1>
-            <p className="text-sm text-gray-600 max-w-xl mx-auto">
-              Films and sports personalities ranked by tiers
+            <h1 className="text-6xl font-bold text-black mb-8 leading-tight">
+              My Favorites
+            </h1>
+            <p className="text-xl text-gray-700 max-w-3xl mx-auto leading-relaxed">
+              Films and sports personalities that inspire me, organized by tiers of excellence.
             </p>
           </div>
         </div>
       </section>
 
       {/* Tab Navigation */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
-        <div className="flex justify-center mb-4">
-          <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg max-w-md">
+      <div className="max-w-6xl mx-auto px-6 lg:px-8 pb-16">
+        <div className="flex justify-center mb-16">
+          <div className="flex space-x-8">
             <button
               onClick={() => setActiveTab('films')}
-              className={`flex-1 py-2 px-4 text-sm font-medium rounded-md transition-colors ${
+              className={`py-3 px-6 font-medium transition-colors ${
                 activeTab === 'films'
-                  ? 'bg-white text-blue-600 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
+                  ? 'bg-black text-white'
+                  : 'border border-black text-black hover:bg-black hover:text-white'
               }`}
             >
-              🎬 Films
+              Films
             </button>
             <button
               onClick={() => setActiveTab('sports')}
-              className={`flex-1 py-2 px-4 text-sm font-medium rounded-md transition-colors ${
+              className={`py-3 px-6 font-medium transition-colors ${
                 activeTab === 'sports'
-                  ? 'bg-white text-blue-600 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
+                  ? 'bg-black text-white'
+                  : 'border border-black text-black hover:bg-black hover:text-white'
               }`}
             >
-              ⚽ Sports
+              Sports
             </button>
           </div>
         </div>
 
         {/* Films Tab */}
         {activeTab === 'films' && (
-          <div className="space-y-3 pb-6">
+          <div className="space-y-8 pb-16">
             {Object.entries(filmTiers).map(([tier, films]) => {
               const tierId = `films-${tier.replace(/\s+/g, '-').toLowerCase()}`
               const showSlider = films.length > 6
               return (
-                <div key={tier} className="bg-white rounded-lg shadow-sm border overflow-hidden">
-                  <div className={`${getTierColor(tier)} px-3 py-2`}>
-                    <h2 className={`text-sm font-bold ${getTierTextColor(tier)}`}>{tier}</h2>
+                <div key={tier} className="bg-white border border-gray-200 overflow-hidden mb-16">
+                  <div className={`${getTierColor(tier)} px-6 py-4`}>
+                    <h2 className={`text-lg font-bold ${getTierTextColor(tier)} tracking-wide`}>{tier}</h2>
                   </div>
-                  <div className="p-3 relative">
+                  <div className="p-6 relative">
                     {showSlider && (
                       <>
                         <button
@@ -324,7 +328,7 @@ export default function FavoritesPage() {
                       style={showSlider ? { scrollbarWidth: 'none', msOverflowStyle: 'none' } : {}}
                     >
                       {films.map((film, index) => (
-                        <div key={index} className={`bg-gray-50 rounded-lg overflow-hidden hover:bg-gray-100 transition-colors shadow-sm ${showSlider ? 'min-w-[120px] max-w-[120px]' : ''}`}>
+                        <div key={index} className={`bg-white border border-gray-200 overflow-hidden hover:shadow-md transition-all duration-300 ${showSlider ? 'min-w-[120px] max-w-[120px]' : ''}`}>
                           <div className="aspect-[3/4] bg-gray-200 flex items-center justify-center">
                             <img
                               src={film.poster}
@@ -365,16 +369,16 @@ export default function FavoritesPage() {
 
         {/* Sports Tab */}
         {activeTab === 'sports' && (
-          <div className="space-y-3 pb-6">
+          <div className="space-y-8 pb-16">
             {Object.entries(sportsTiers).map(([tier, athletes]) => {
               const tierId = `sports-${tier.replace(/\s+/g, '-').toLowerCase()}`
               const showSlider = athletes.length > 6
               return (
-                <div key={tier} className="bg-white rounded-lg shadow-sm border overflow-hidden">
-                  <div className={`${getTierColor(tier)} px-3 py-2`}>
-                    <h2 className={`text-sm font-bold ${getTierTextColor(tier)}`}>{tier}</h2>
+                <div key={tier} className="bg-white border border-gray-200 overflow-hidden mb-16">
+                  <div className={`${getTierColor(tier)} px-6 py-4`}>
+                    <h2 className={`text-lg font-bold ${getTierTextColor(tier)} tracking-wide`}>{tier}</h2>
                   </div>
-                  <div className="p-3 relative">
+                  <div className="p-6 relative">
                     {showSlider && (
                       <>
                         <button
@@ -399,7 +403,7 @@ export default function FavoritesPage() {
                       style={showSlider ? { scrollbarWidth: 'none', msOverflowStyle: 'none' } : {}}
                     >
                       {athletes.map((athlete, index) => (
-                        <div key={index} className={`bg-gray-50 rounded-lg overflow-hidden hover:bg-gray-100 transition-colors shadow-sm ${showSlider ? 'min-w-[120px] max-w-[120px]' : ''}`}>
+                        <div key={index} className={`bg-white border border-gray-200 overflow-hidden hover:shadow-md transition-all duration-300 ${showSlider ? 'min-w-[120px] max-w-[120px]' : ''}`}>
                           <div className="aspect-square bg-gray-200 flex items-center justify-center">
                             <img
                               src={athlete.photo}
