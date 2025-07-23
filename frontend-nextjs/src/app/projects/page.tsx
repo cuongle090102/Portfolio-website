@@ -84,12 +84,48 @@ export default function ProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [previewProject, setPreviewProject] = useState<Project | null>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState({
+    projects: false
+  });
 
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:5000';
 
   useEffect(() => {
     fetchProjects();
+  }, []);
+
+  useEffect(() => {
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -100px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const sectionId = entry.target.getAttribute('data-section');
+          if (sectionId) {
+            setIsVisible(prev => ({
+              ...prev,
+              [sectionId]: true
+            }));
+          }
+        }
+      });
+    }, observerOptions);
+
+    // Observe all sections
+    const sections = document.querySelectorAll('[data-section]');
+    sections.forEach(section => observer.observe(section));
+
+    // Set projects as visible immediately
+    setIsVisible(prev => ({ ...prev, projects: true }));
+
+    return () => {
+      observer.disconnect();
+    };
   }, []);
 
   // Handle ESC key to close modal
@@ -139,6 +175,10 @@ export default function ProjectsPage() {
         project.status === 'published' || project.status === 'completed'
       );
       setProjects(publishedProjects);
+      // Set the first project as the initial preview
+      if (publishedProjects.length > 0) {
+        setPreviewProject(publishedProjects[0]);
+      }
     } catch (error) {
       console.error('Error fetching projects:', error);
     } finally {
@@ -166,9 +206,9 @@ export default function ProjectsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-[#000305] flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto"></div>
           <p className="mt-4 text-gray-600">Loading projects...</p>
         </div>
       </div>
@@ -176,197 +216,216 @@ export default function ProjectsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white text-black">
-      {/* Navigation */}
-      <nav className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50">
-        <div className="bg-white/80 backdrop-blur-md border border-gray-200 rounded-full px-6 py-3 shadow-lg">
-          <div className="flex items-center space-x-6">
-            <Link href="/" className="text-black hover:text-gray-600 transition-colors text-sm">
-              Index
-            </Link>
-            <div className="w-px h-4 bg-gray-300"></div>
-            <Link href="/projects" className="text-black hover:text-gray-600 transition-colors text-sm">
-              Work
-            </Link>
-            <div className="w-px h-4 bg-gray-300"></div>
-            <Link href="/favorites" className="text-black hover:text-gray-600 transition-colors text-sm">
-              Favorites
-            </Link>
-            <div className="w-px h-4 bg-gray-300"></div>
-            <Link href="/admin" className="text-black hover:text-gray-600 transition-colors text-sm">
-              Admin
-            </Link>
-          </div>
-        </div>
-      </nav>
+    <div className="min-h-screen bg-white text-black page-transition">
+      {/* Header Name */}
+      <div className="absolute top-6 left-1/2 transform -translate-x-1/2 z-10">
+        <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
+          CUONG LE
+        </h1>
+      </div>
 
-      {/* Header */}
-      <header className="pt-32 pb-16">
-        <div className="max-w-6xl mx-auto px-6 lg:px-8">
-          <div className="text-center">
-            <h1 className="text-6xl font-bold text-black mb-8 leading-tight">
-              Selected Work
-            </h1>
-            <p className="text-xl text-gray-700 max-w-3xl mx-auto leading-relaxed">
-              A curated collection of data science projects showcasing expertise in 
-              machine learning, analytics, and intelligent automation.
-            </p>
-          </div>
-        </div>
-      </header>
-
-      {/* Projects Grid */}
-      <main className="max-w-6xl mx-auto px-6 lg:px-8 pb-32">
+      {/* 3-Section Layout */}
+      <main className="h-screen flex" data-section="projects">
         {projects.length === 0 ? (
-          <div className="text-center py-24">
-            <div className="w-24 h-24 mx-auto bg-gray-100 rounded-lg flex items-center justify-center mb-6">
-              <CodeBracketIcon className="h-12 w-12 text-gray-400" />
+          <div className="w-full flex items-center justify-center">
+            <div className="text-center">
+              <div className="w-24 h-24 mx-auto bg-gray-100 rounded-lg flex items-center justify-center mb-6">
+                <CodeBracketIcon className="h-12 w-12 text-gray-600" />
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">No projects yet</h3>
+              <p className="text-gray-600 mb-8">Projects will appear here once they are published</p>
+              <Link
+                href="/admin"
+                className="inline-flex items-center bg-gray-900 text-white px-8 py-3 font-medium hover:bg-gray-800 transition-colors duration-300"
+              >
+                Add Your First Project
+              </Link>
             </div>
-            <h3 className="text-2xl font-bold text-black mb-4">No projects yet</h3>
-            <p className="text-gray-600 mb-8">Projects will appear here once they are published</p>
-            <Link
-              href="/admin"
-              className="inline-flex items-center bg-black text-white px-8 py-3 font-medium hover:bg-gray-900 transition-colors"
-            >
-              Add Your First Project
-            </Link>
           </div>
         ) : (
-          <div className="relative">
-            {/* Navigation Buttons */}
-            {projects.length > 3 && (
-              <>
-                <button
-                  onClick={scrollLeft}
-                  className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 bg-white rounded-full p-2 shadow-lg hover:shadow-xl transition-shadow duration-300"
-                >
-                  <ChevronLeftIcon className="h-6 w-6 text-gray-600" />
-                </button>
-                <button
-                  onClick={scrollRight}
-                  className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 bg-white rounded-full p-2 shadow-lg hover:shadow-xl transition-shadow duration-300"
-                >
-                  <ChevronRightIcon className="h-6 w-6 text-gray-600" />
-                </button>
-              </>
-            )}
-
-            {/* Projects Container */}
-            <div 
-              ref={scrollContainerRef}
-              className={`flex ${projects.length > 3 ? 'overflow-x-auto projects-slider' : 'justify-center'} gap-8 pb-4`}
-            >
-              {projects.map((project) => (
-                <div
-                  key={project.id}
-                  className={`bg-white border border-gray-200 overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer ${
-                    projects.length > 3 ? 'min-w-[350px] max-w-[350px]' : 'w-full max-w-[350px]'
-                  }`}
-                  onClick={() => setSelectedProject(project)}
-                >
-                  {project.image_url ? (
-                    <div className="relative h-96 overflow-hidden bg-gray-200 flex items-center justify-center">
-                      <img
-                        src={project.image_url}
-                        alt={project.title}
-                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.style.display = 'none';
-                          target.parentElement!.innerHTML = `
-                            <div class="flex flex-col items-center justify-center h-full text-gray-500">
-                              <svg class="w-12 h-12 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                              </svg>
-                              <span class="text-sm">Image not available</span>
-                            </div>
-                          `;
-                        }}
-                      />
-                    </div>
-                  ) : (
-                    <div className="relative h-96 overflow-hidden bg-gray-200 flex flex-col items-center justify-center text-gray-500">
-                      <svg className="w-12 h-12 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                      </svg>
-                      <span className="text-sm">No image</span>
-                    </div>
-                  )}
-                
-                  <div className="p-4">
-                    <h2 className="text-xl font-bold text-gray-900 mb-3">{project.title}</h2>
-                    <p className="text-gray-600 mb-3 leading-relaxed line-clamp-2">{project.description}</p>
-                    
-                    {project.technologies && (
-                      <div className="mb-3">
-                        <div className="flex flex-wrap gap-2">
-                          {(typeof project.technologies === 'string' 
-                            ? project.technologies.split(',') 
-                            : project.technologies
-                          ).map((tech, index) => (
-                            <span
-                              key={index}
-                              className={`px-2 py-1 text-xs rounded-full ${getTechColor(tech.trim(), index)}`}
-                            >
-                              {tech.trim()}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    <div className="flex space-x-3">
-                      {project.demo_url && (
-                        <a
-                          href={project.demo_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center px-4 py-2 bg-black text-white text-sm font-medium hover:bg-gray-900 transition-colors"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <ArrowTopRightOnSquareIcon className="h-4 w-4 mr-1" />
-                          Demo
-                        </a>
-                      )}
-                      {project.github_url && (
-                        <a
-                          href={project.github_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center px-4 py-2 border border-black text-black text-sm font-medium hover:bg-black hover:text-white transition-colors"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <CodeBracketIcon className="h-4 w-4 mr-1" />
-                          Code
-                        </a>
-                      )}
+          <>
+            {/* Section 1: Selected Work List */}
+            <div className="w-1/4 flex flex-col pl-6">
+              <div className="flex-1 flex items-center justify-center">
+                <div className="space-y-1">
+                  <h2 className="text-xs md:text-sm font-medium text-gray-600 mb-2">
+                    Selected work ({projects.length})
+                  </h2>
+                {projects.map((project, index) => (
+                  <div
+                    key={project.id}
+                    className="cursor-pointer group transition-all duration-300"
+                    onMouseEnter={() => setPreviewProject(project)}
+                    onClick={() => setSelectedProject(project)}
+                  >
+                    <div className="relative">
+                      <h3 className={`text-xs md:text-sm font-medium transition-all duration-300 leading-tight ${
+                        previewProject?.id === project.id 
+                          ? 'text-gray-900' 
+                          : 'text-gray-600 hover:text-gray-900'
+                      }`}>
+                        {project.title}
+                      </h3>
+                      <div className={`h-px bg-gray-900 transition-all duration-300 ${
+                        previewProject?.id === project.id 
+                          ? 'w-full' 
+                          : 'w-0'
+                      }`}></div>
                     </div>
                   </div>
+                ))}
                 </div>
-              ))}
+              </div>
             </div>
-          </div>
+
+            {/* Section 2: Project Display */}
+            <div className="w-1/2 flex flex-col items-center justify-center pt-20">
+              <div className="relative aspect-video w-full overflow-hidden bg-gray-100 border border-gray-200 flex items-center justify-center">
+                {previewProject ? (
+                  previewProject.image_url ? (
+                    <img
+                      key={previewProject.id}
+                      src={previewProject.image_url}
+                      alt={previewProject.title}
+                      className="max-w-full max-h-full object-contain transition-all duration-800 ease-out"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                        target.parentElement!.innerHTML = `
+                          <div class="flex flex-col items-center justify-center h-full text-gray-600">
+                            <svg class="w-16 h-16 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                            <span class="text-lg">${previewProject.title}</span>
+                            <span class="text-sm">Image not available</span>
+                          </div>
+                        `;
+                      }}
+                    />
+                  ) : (
+                    <div className="flex flex-col items-center justify-center h-full text-gray-600">
+                      <svg className="w-16 h-16 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                      </svg>
+                      <span className="text-lg">{previewProject.title}</span>
+                      <span className="text-sm">No preview available</span>
+                    </div>
+                  )
+                ) : (
+                  <div className="flex flex-col items-center justify-center h-full text-gray-600">
+                    <svg className="w-16 h-16 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                    </svg>
+                    <span className="text-lg">Hover over a project title to preview</span>
+                  </div>
+                )}
+              </div>
+              
+              {/* Project Info */}
+              {previewProject && (
+                <div className="mt-6 space-y-4 text-center max-w-3xl">
+                  <p className="text-gray-600 leading-relaxed text-sm">
+                    {previewProject.description}
+                  </p>
+                  
+                  {previewProject.technologies && (
+                    <div className="flex flex-wrap gap-2 justify-center">
+                      {(typeof previewProject.technologies === 'string' 
+                        ? previewProject.technologies.split(',') 
+                        : previewProject.technologies
+                      ).map((tech, index) => (
+                        <span
+                          key={index}
+                          className="px-2 py-1 text-xs text-gray-600 border border-gray-300 rounded"
+                        >
+                          {tech.trim()}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  <div className="flex space-x-3 justify-center">
+                    {previewProject.demo_url && (
+                      <a
+                        href={previewProject.demo_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center px-3 py-2 bg-gray-900 text-white text-xs font-medium hover:bg-gray-800 transition-colors duration-300"
+                      >
+                        <ArrowTopRightOnSquareIcon className="h-3 w-3 mr-1" />
+                        Demo
+                      </a>
+                    )}
+                    {previewProject.github_url && (
+                      <a
+                        href={previewProject.github_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center px-3 py-2 border border-gray-900 text-gray-900 text-xs font-medium hover:bg-gray-900 hover:text-white transition-colors duration-300"
+                      >
+                        <CodeBracketIcon className="h-3 w-3 mr-1" />
+                        Code
+                      </a>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Section 3: Vertical Navigation */}
+            <div className="w-1/4 flex flex-col pr-6">
+              <div className="flex-1 flex items-center justify-center">
+                <div className="flex flex-col space-y-6">
+                  <Link 
+                    href="/" 
+                    className="text-gray-900 text-sm md:text-base font-medium hover:text-gray-600 transition-colors duration-300"
+                  >
+                    Index
+                  </Link>
+                <Link 
+                  href="/projects" 
+                  className="text-gray-900 text-sm md:text-base font-medium hover:text-gray-600 transition-colors duration-300 relative"
+                >
+                  Work
+                  <div className="absolute bottom-0 left-0 w-full h-0.5 bg-gray-900"></div>
+                </Link>
+                <Link 
+                  href="/favorites" 
+                  className="text-gray-900 text-sm md:text-base font-medium hover:text-gray-600 transition-colors duration-300"
+                >
+                  Favorites
+                </Link>
+                <Link 
+                  href="/admin" 
+                  className="text-gray-900 text-sm md:text-base font-medium hover:text-gray-600 transition-colors duration-300"
+                >
+                  Admin
+                </Link>
+                </div>
+              </div>
+            </div>
+          </>
         )}
       </main>
 
       {/* Project Detail Modal */}
       {selectedProject && (
         <div 
-          className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50"
+          className="fixed inset-0 bg-black/80 backdrop-blur-sm overflow-y-auto h-full w-full z-50"
           onClick={() => setSelectedProject(null)}
         >
           <div 
-            className="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white"
+            className="relative top-4 md:top-20 mx-auto p-6 lg:p-8 border border-gray-300 w-full md:w-11/12 lg:w-5/6 xl:w-4/5 2xl:w-3/4 h-full md:h-auto shadow-2xl bg-white text-gray-900"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="mt-3">
-              <div className="flex justify-between items-start mb-4">
-                <div className="flex-1 text-center">
-                  <h1 className="text-2xl font-bold text-gray-900">{selectedProject.title}</h1>
+              <div className="flex justify-between items-start mb-6">
+                <div className="flex-1">
+                  <h1 className="text-xl md:text-3xl font-bold text-gray-900">{selectedProject.title}</h1>
                 </div>
                 <button
                   onClick={() => setSelectedProject(null)}
-                  className="text-gray-400 hover:text-gray-600 text-2xl font-bold ml-4"
+                  className="text-gray-600 hover:text-gray-900 text-2xl md:text-3xl font-light ml-4 transition-colors duration-300"
                 >
                   ×
                 </button>
@@ -380,7 +439,7 @@ export default function ProjectsPage() {
                       {(selectedProject as any).media.map((mediaItem: any, index: number) => (
                         <div key={index} className="w-full">
                           {mediaItem.type === 'video' ? (
-                            <div className="w-full bg-gray-900 rounded-lg overflow-hidden">
+                            <div className="w-full bg-gray-100 rounded-lg overflow-hidden">
                               {mediaItem.url.includes('youtube.com') || mediaItem.url.includes('youtu.be') || mediaItem.url.includes('vimeo.com') ? (
                                 <iframe
                                   src={getEmbedUrl(mediaItem.url)}
@@ -416,7 +475,7 @@ export default function ProjectsPage() {
                               )}
                             </div>
                           ) : (
-                            <div className="w-full bg-gray-200 flex items-center justify-center rounded-lg overflow-hidden">
+                            <div className="w-full bg-gray-100 flex items-center justify-center rounded-lg overflow-hidden">
                               <img
                                 src={mediaItem.url}
                                 alt={`${selectedProject.title} - Image ${index + 1}`}
@@ -443,7 +502,7 @@ export default function ProjectsPage() {
                       ))}
                     </div>
                   ) : (
-                    <div className="w-full h-64 bg-gray-200 flex items-center justify-center rounded-lg overflow-hidden">
+                    <div className="w-full h-64 bg-gray-100 flex items-center justify-center rounded-lg overflow-hidden">
                       <img
                         src={selectedProject.image_url}
                         alt={selectedProject.title}
@@ -465,7 +524,7 @@ export default function ProjectsPage() {
                   )}
                 </div>
               ) : (
-                <div className="w-full h-64 bg-gray-200 flex flex-col items-center justify-center rounded-lg mb-4 text-gray-500">
+                <div className="w-full h-64 bg-gray-100 flex flex-col items-center justify-center rounded-lg mb-4 text-gray-500">
                   <svg className="w-12 h-12 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                   </svg>
@@ -473,28 +532,28 @@ export default function ProjectsPage() {
                 </div>
               )}
               
-              <div className="space-y-4">
+              <div className="space-y-6">
                 {selectedProject.blocks && selectedProject.blocks.length > 0 ? (
-                  <div>
+                  <div className="text-gray-900">
                     <BlockRenderer blocks={selectedProject.blocks} />
                   </div>
                 ) : selectedProject.content ? (
-                  <div className="prose prose-gray max-w-none">
+                  <div className="prose max-w-none">
                     <div className="text-gray-700 leading-relaxed whitespace-pre-line text-justify">
                       {selectedProject.content}
                     </div>
                   </div>
                 ) : (
-                  <div className="text-gray-500 italic">No content available</div>
+                  <div className="text-gray-600 italic">No content available</div>
                 )}
                 
-                <div className="flex space-x-3 pt-4">
+                <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 pt-6 border-t border-gray-200">
                   {selectedProject.demo_url && (
                     <a
                       href={selectedProject.demo_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+                      className="inline-flex items-center justify-center px-6 py-3 text-sm font-medium text-white bg-gray-900 hover:bg-gray-800 transition-colors duration-300"
                     >
                       <ArrowTopRightOnSquareIcon className="h-4 w-4 mr-2" />
                       View Demo
@@ -505,7 +564,7 @@ export default function ProjectsPage() {
                       href={selectedProject.github_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                      className="inline-flex items-center justify-center px-6 py-3 border border-gray-900 text-sm font-medium text-gray-900 hover:bg-gray-900 hover:text-white transition-colors duration-300"
                     >
                       <CodeBracketIcon className="h-4 w-4 mr-2" />
                       View Code

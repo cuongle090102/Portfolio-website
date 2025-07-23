@@ -72,6 +72,13 @@ def create_project(current_user):
         if existing:
             slug = f"{slug}-{int(datetime.now().timestamp())}"
         
+        # Handle technologies - support both array and string formats
+        tech_data = data.get('technologies', [])
+        if isinstance(tech_data, list):
+            technologies = tech_data
+        else:
+            technologies = tech_data
+            
         # Create project
         project = Project(
             title=data['title'],
@@ -80,7 +87,7 @@ def create_project(current_user):
             full_description=data.get('full_description', ''),
             media=data.get('media', []),
             tags=data.get('tags', []),
-            technologies=data.get('technologies', []),
+            technologies=technologies,
             links=data.get('links', {}),
             featured=data.get('featured', False),
             status=data.get('status', 'completed'),
@@ -155,7 +162,12 @@ def update_project(current_user, id):
         if 'tags' in data:
             project.tags = data['tags']
         if 'technologies' in data:
-            project.technologies = data['technologies']
+            # Handle both array and string formats
+            tech_data = data['technologies']
+            if isinstance(tech_data, list):
+                project.technologies = tech_data
+            else:
+                project.technologies = tech_data
         if 'links' in data:
             project.links = data['links']
         if 'featured' in data:
