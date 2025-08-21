@@ -489,12 +489,12 @@ export default function HomePage() {
           </div>
           
           <div className={`text-center mt-24 transition-all duration-1000 delay-600 ${isVisible.work ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-            <a href="mailto:cle6565@gmail.com" className="inline-flex items-center bg-white text-black px-8 py-4 font-medium hover:bg-gray-200 transition-all duration-300 hover:scale-105">
-              Contact with me
+            <Link href="/projects" className="inline-flex items-center bg-white text-black px-8 py-4 font-medium hover:bg-gray-200 transition-all duration-300 hover:scale-105">
+              View All Projects
               <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l4 4m0 0l4-4m-4 4v11" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>
-            </a>
+            </Link>
           </div>
         </div>
       </section>
@@ -580,12 +580,12 @@ export default function HomePage() {
           <div 
             className={`flex flex-col sm:flex-row gap-6 justify-center transition-all duration-1000 delay-400 ${isVisible.contact ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
           >
-            <a
-              href="mailto:cle6565@gmail.com"
+            <Link
+              href="/projects"
               className="bg-black text-white px-10 py-4 font-medium hover:bg-gray-900 transition-all duration-300 hover:scale-105"
             >
-              Contact with me
-            </a>
+              View All Projects
+            </Link>
             <Link
               href="/favorites"
               className="border border-black text-black px-10 py-4 font-medium hover:bg-black hover:text-white transition-all duration-300 hover:scale-105"

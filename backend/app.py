@@ -48,10 +48,12 @@ def create_app():
     from routes.public import public_bp
     from routes.projects import projects_bp
     from routes.admin import admin_bp
+    from routes.favorites import favorites_bp
     
     app.register_blueprint(public_bp, url_prefix='/api')
     app.register_blueprint(projects_bp, url_prefix='/api/projects')
     app.register_blueprint(admin_bp, url_prefix='/api/admin')
+    app.register_blueprint(favorites_bp, url_prefix='/api/favorites')
     
     # Error handlers
     @app.errorhandler(404)

@@ -42,3 +42,17 @@ class Contact(db.Model):
     message = Column(Text)
     created_at = Column(DateTime, default=datetime.utcnow)
     status = Column(String(50), default='unread')
+
+class Favorite(db.Model):
+    __tablename__ = 'favorites'
+    
+    id = Column(Integer, primary_key=True)
+    title = Column(String(200), nullable=False)
+    category = Column(String(50), nullable=False)  # 'film' or 'athlete'
+    tier = Column(String(50), nullable=False)  # 'S-Tier', 'A-Tier', etc.
+    year = Column(Integer)
+    genre_or_sport = Column(String(100))  # genre for films, sport for athletes
+    achievement = Column(String(200))  # for athletes
+    poster_or_photo = Column(String(500))  # image URL
+    created_at = Column(DateTime, default=datetime.utcnow)
+    order = Column(Integer, default=0)
