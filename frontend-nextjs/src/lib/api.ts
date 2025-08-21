@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { mockProjects, mockUser } from './mockData';
+import { mockProjects, mockUser, mockFavorites } from './mockData';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:5000';
 const isProduction = false; // Disable production mode for local development
@@ -122,6 +122,22 @@ export const apiClient = {
     } catch (error) {
       console.error('Delete project API error:', error);
       throw error;
+    }
+  },
+
+  async getFavorites() {
+    if (isProduction) {
+      // Return mock data for GitHub Pages deployment
+      return { data: mockFavorites };
+    }
+    
+    try {
+      const response = await axios.get(`${API_BASE_URL}/api/favorites/`);
+      return response;
+    } catch (error) {
+      console.error('Favorites API error:', error);
+      // Fallback to mock data in development if API fails
+      return { data: mockFavorites };
     }
   }
 };
