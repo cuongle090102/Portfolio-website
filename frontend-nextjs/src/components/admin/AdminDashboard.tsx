@@ -10,9 +10,10 @@ import { apiClient } from '@/lib/api';
 
 interface Block {
   id: string;
-  type: 'text' | 'heading' | 'subheading' | 'image' | 'video';
+  type: 'text' | 'heading' | 'subheading' | 'image' | 'video' | 'gallery';
   content: string;
   metadata?: any;
+  images?: string[]; // For gallery type - array of image URLs
 }
 
 interface Project {

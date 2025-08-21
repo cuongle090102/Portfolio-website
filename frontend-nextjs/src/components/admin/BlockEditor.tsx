@@ -5,9 +5,10 @@ import { PlusIcon, TrashIcon, ArrowUpIcon, ArrowDownIcon } from '@heroicons/reac
 
 interface Block {
   id: string;
-  type: 'text' | 'heading' | 'subheading' | 'image' | 'video';
+  type: 'text' | 'heading' | 'subheading' | 'image' | 'video' | 'gallery';
   content: string;
   metadata?: any;
+  images?: string[]; // For gallery type - array of image URLs
 }
 
 interface BlockEditorProps {
@@ -224,6 +225,69 @@ export default function BlockEditor({ initialBlocks, onChange }: BlockEditorProp
           </div>
         )}
 
+        {block.type === 'gallery' && (
+          <div>
+            <div className="space-y-3">
+              <label className="text-sm font-medium text-gray-700">Gallery Images (one URL per line)</label>
+              <textarea
+                value={block.images ? block.images.join('\n') : block.content}
+                onChange={(e) => {
+                  const urls = e.target.value.split('\n').filter(url => url.trim());
+                  console.log('Gallery URLs processed:', urls);
+                  const newBlocks = [...blocks];
+                  newBlocks[index] = {
+                    ...block,
+                    content: e.target.value,
+                    images: urls
+                  };
+                  updateBlocks(newBlocks);
+                }}
+                placeholder="Enter image URLs, one per line...\nhttps://example.com/image1.jpg\nhttps://example.com/image2.jpg"
+                className="w-full min-h-[100px] p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y"
+              />
+            </div>
+            {(block.images && block.images.length > 0) && (
+              <div className="mt-3">
+                <div className={`grid gap-2 ${
+                  block.images.length === 1 ? 'grid-cols-1' :
+                  block.images.length === 2 ? 'grid-cols-2' :
+                  block.images.length <= 4 ? 'grid-cols-2' :
+                  'grid-cols-3'
+                }`}>
+                  {block.images.map((imageUrl, imgIndex) => (
+                    <div key={imgIndex} className="relative bg-gray-100 rounded-lg overflow-hidden">
+                      <img
+                        src={imageUrl}
+                        alt={`Gallery image ${imgIndex + 1}`}
+                        className="w-full h-24 object-cover"
+                        onLoad={() => {
+                          console.log('Gallery preview image loaded:', imageUrl);
+                        }}
+                        onError={(e) => {
+                          console.error('Gallery preview image failed to load:', imageUrl);
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                          const parent = target.parentElement;
+                          if (parent) {
+                            parent.innerHTML = `
+                              <div class="flex flex-col items-center justify-center h-24 text-gray-500 text-xs bg-gray-100">
+                                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                                <span>Failed to load</span>
+                              </div>
+                            `;
+                          }
+                        }}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Add Block Menu */}
         <div className="mt-4 opacity-0 group-hover:opacity-100 transition-opacity">
           <div className="flex flex-wrap gap-2">
@@ -266,6 +330,14 @@ export default function BlockEditor({ initialBlocks, onChange }: BlockEditorProp
             >
               <PlusIcon className="w-3 h-3" />
               Video
+            </button>
+            <button
+              type="button"
+              onClick={() => addBlock(index, 'gallery')}
+              className="flex items-center gap-1 px-2 py-1 text-xs bg-orange-100 hover:bg-orange-200 text-orange-700 rounded"
+            >
+              <PlusIcon className="w-3 h-3" />
+              Gallery
             </button>
           </div>
         </div>

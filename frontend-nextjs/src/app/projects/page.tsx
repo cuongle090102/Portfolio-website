@@ -6,6 +6,69 @@ import Link from 'next/link';
 import BlockRenderer from '@/components/BlockRenderer';
 import { apiClient } from '@/lib/api';
 
+// Adaptive Image Component
+interface AdaptiveImageProps {
+  src: string;
+  alt: string;
+  className?: string;
+  maxHeight?: string;
+  onError?: (e: React.SyntheticEvent<HTMLImageElement>) => void;
+}
+
+function AdaptiveImage({ src, alt, className = '', maxHeight = '80vh', onError }: AdaptiveImageProps) {
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
+
+  // Reset states when src changes
+  useEffect(() => {
+    setIsLoading(true);
+    setHasError(false);
+  }, [src]);
+
+  const handleLoad = () => {
+    setIsLoading(false);
+    setHasError(false);
+  };
+
+  const handleError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    setIsLoading(false);
+    setHasError(true);
+    if (onError) {
+      onError(e);
+    }
+  };
+
+  if (hasError) {
+    return (
+      <div className={`flex flex-col items-center justify-center min-h-[200px] text-gray-500 bg-gray-100 rounded-lg ${className}`}>
+        <svg className="w-12 h-12 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+        </svg>
+        <span className="text-sm">Image not available</span>
+      </div>
+    );
+  }
+
+  return (
+    <div className="relative w-full">
+      {isLoading && (
+        <div className="flex flex-col items-center justify-center min-h-[200px] bg-gray-100 rounded-lg">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-600 mb-2"></div>
+          <span className="text-sm text-gray-600">Loading image...</span>
+        </div>
+      )}
+      <img
+        src={src}
+        alt={alt}
+        className={`w-full h-auto object-contain bg-gray-100 rounded-lg transition-all duration-500 ${isLoading ? 'hidden' : 'block'} ${className}`}
+        style={{ maxHeight }}
+        onLoad={handleLoad}
+        onError={handleError}
+      />
+    </div>
+  );
+}
+
 interface Block {
   id: string;
   type: 'text' | 'heading' | 'subheading' | 'image' | 'video';
@@ -95,6 +158,18 @@ export default function ProjectsPage() {
   useEffect(() => {
     fetchProjects();
   }, []);
+
+  // Preload project images for faster switching
+  useEffect(() => {
+    if (projects.length > 0) {
+      projects.forEach(project => {
+        if (project.image_url) {
+          const img = new Image();
+          img.src = project.image_url;
+        }
+      });
+    }
+  }, [projects]);
 
   useEffect(() => {
     const observerOptions = {
@@ -280,30 +355,36 @@ export default function ProjectsPage() {
 
             {/* Section 2: Project Display */}
             <div className="w-1/2 flex flex-col items-center justify-center pt-20">
-              <div className="relative aspect-video w-full overflow-hidden bg-gray-100 border border-gray-200 flex items-center justify-center">
+              <div className="relative w-full min-h-[300px] bg-gray-100 border border-gray-200 flex items-center justify-center rounded-lg overflow-hidden">
                 {previewProject ? (
                   previewProject.image_url ? (
                     <img
                       key={previewProject.id}
                       src={previewProject.image_url}
                       alt={previewProject.title}
-                      className="max-w-full max-h-full object-contain transition-all duration-800 ease-out"
+                      className="w-full h-auto max-h-[70vh] object-contain transition-all duration-500 ease-out rounded-lg"
+                      style={{ 
+                        minHeight: '300px',
+                        backgroundColor: '#f9fafb'
+                      }}
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
                         target.style.display = 'none';
-                        target.parentElement!.innerHTML = `
-                          <div class="flex flex-col items-center justify-center h-full text-gray-600">
-                            <svg class="w-16 h-16 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                            </svg>
-                            <span class="text-lg">${previewProject.title}</span>
-                            <span class="text-sm">Image not available</span>
-                          </div>
-                        `;
+                        if (target.parentElement) {
+                          target.parentElement.innerHTML = `
+                            <div class="flex flex-col items-center justify-center h-full min-h-[300px] text-gray-600">
+                              <svg class="w-16 h-16 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                              </svg>
+                              <span class="text-lg">${previewProject.title}</span>
+                              <span class="text-sm">Image not available</span>
+                            </div>
+                          `;
+                        }
                       }}
                     />
                   ) : (
-                    <div className="flex flex-col items-center justify-center h-full text-gray-600">
+                    <div className="flex flex-col items-center justify-center h-full min-h-[300px] text-gray-600">
                       <svg className="w-16 h-16 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                       </svg>
@@ -312,7 +393,7 @@ export default function ProjectsPage() {
                     </div>
                   )
                 ) : (
-                  <div className="flex flex-col items-center justify-center h-full text-gray-600">
+                  <div className="flex flex-col items-center justify-center h-full min-h-[300px] text-gray-600">
                     <svg className="w-16 h-16 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
                     </svg>
@@ -475,26 +556,37 @@ export default function ProjectsPage() {
                               )}
                             </div>
                           ) : (
-                            <div className="w-full bg-gray-100 flex items-center justify-center rounded-lg overflow-hidden">
-                              <img
-                                src={mediaItem.url}
-                                alt={`${selectedProject.title} - Image ${index + 1}`}
-                                className="w-full max-h-96 object-contain"
-                                onError={(e) => {
-                                  const target = e.target as HTMLImageElement;
-                                  target.style.display = 'none';
-                                  target.parentElement!.innerHTML = `
-                                    <div class="flex flex-col items-center justify-center h-64 text-gray-500">
-                                      <svg class="w-12 h-12 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                      </svg>
-                                      <span class="text-sm">Image ${index + 1} not available</span>
-                                    </div>
-                                  `;
-                                }}
-                              />
+                            <div className="w-full">
+                              <div className="w-full flex justify-center rounded-lg overflow-hidden relative">
+                                <img
+                                  src={mediaItem.url}
+                                  alt={`${selectedProject.title} - Image ${index + 1}`}
+                                  className="h-auto object-contain max-h-[80vh] max-w-full rounded-lg"
+                                  style={{ 
+                                    minHeight: '200px',
+                                    backgroundColor: 'transparent'
+                                  }}
+                                  loading="lazy"
+                                  onError={(e) => {
+                                    const target = e.target as HTMLImageElement;
+                                    console.log('Modal image failed to load:', mediaItem.url);
+                                    target.style.display = 'none';
+                                    if (target.parentElement) {
+                                      target.parentElement.innerHTML = `
+                                        <div class="flex flex-col items-center justify-center h-64 text-gray-500 bg-white border border-gray-200 rounded-lg">
+                                          <svg class="w-12 h-12 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                          </svg>
+                                          <span class="text-sm">Image ${index + 1} not available</span>
+                                          <span class="text-xs text-gray-400 mt-1">Check console for details</span>
+                                        </div>
+                                      `;
+                                    }
+                                  }}
+                                />
+                              </div>
                               {mediaItem.caption && (
-                                <p className="text-sm text-gray-600 text-center mt-2 italic">{mediaItem.caption}</p>
+                                <p className="text-sm text-gray-600 text-center mt-2 italic px-4">{mediaItem.caption}</p>
                               )}
                             </div>
                           )}
@@ -502,22 +594,31 @@ export default function ProjectsPage() {
                       ))}
                     </div>
                   ) : (
-                    <div className="w-full h-64 bg-gray-100 flex items-center justify-center rounded-lg overflow-hidden">
+                    <div className="w-full flex justify-center rounded-lg overflow-hidden relative">
                       <img
                         src={selectedProject.image_url}
                         alt={selectedProject.title}
-                        className="w-full h-full object-cover"
+                        className="h-auto object-contain max-h-[80vh] max-w-full rounded-lg"
+                        style={{ 
+                          minHeight: '200px',
+                          backgroundColor: 'transparent'
+                        }}
+                        loading="lazy"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
+                          console.log('Project modal image failed to load:', selectedProject.image_url);
                           target.style.display = 'none';
-                          target.parentElement!.innerHTML = `
-                            <div class="flex flex-col items-center justify-center h-full text-gray-500">
-                              <svg class="w-12 h-12 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                              </svg>
-                              <span class="text-sm">Image not available</span>
-                            </div>
-                          `;
+                          if (target.parentElement) {
+                            target.parentElement.innerHTML = `
+                              <div class="flex flex-col items-center justify-center h-64 text-gray-500 bg-white border border-gray-200 rounded-lg">
+                                <svg class="w-12 h-12 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                                <span class="text-sm">Image not available</span>
+                                <span class="text-xs text-gray-400 mt-1">Check console for details</span>
+                              </div>
+                            `;
+                          }
                         }}
                       />
                     </div>

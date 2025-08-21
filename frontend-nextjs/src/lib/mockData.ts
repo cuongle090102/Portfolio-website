@@ -1,103 +1,88 @@
-// Mock data for GitHub Pages deployment
+// Real data from database
 export const mockProjects = [
   {
-    id: 1,
-    title: "Portfolio Website",
-    description: "A modern portfolio website built with Next.js and React, featuring responsive design and dynamic content management.",
+    id: 20,
+    title: "PORTFOLIO-WEB: CUONG LE",
+    description: "",
     blocks: [
       {
         id: "1",
-        type: "heading",
-        content: "Project Overview"
-      },
-      {
-        id: "2",
         type: "text",
-        content: "This portfolio website showcases my skills in modern web development. Built with Next.js 13+ and TypeScript, it features a responsive design that works seamlessly across all devices."
-      },
-      {
-        id: "3",
-        type: "subheading",
-        content: "Key Features"
-      },
-      {
-        id: "4",
-        type: "text",
-        content: "• Responsive design with Tailwind CSS\n• Dynamic content management system\n• Modern UI components\n• Fast loading with Next.js optimization\n• SEO-friendly structure"
+        content: ""
       }
     ],
-    technologies: "Next.js,React,TypeScript,Tailwind CSS",
-    demo_url: "https://your-portfolio-demo.com",
-    github_url: "https://github.com/cuongle090102/Portfolio-website",
-    image_url: "https://via.placeholder.com/600x400/3B82F6/FFFFFF?text=Portfolio+Website",
-    status: "published",
-    created_at: "2024-01-15T10:00:00Z"
+    technologies: "Next.js,Python,Typescript,Cloudinary,Flask",
+    demo_url: "",
+    github_url: "",
+    image_url: "https://res.cloudinary.com/dt65gnluq/image/upload/v1755760007/pw_begijr.png",
+    status: "completed",
+    created_at: "2025-08-21T07:08:12.477172",
+    media: [
+      {
+        caption: "Thumbnail",
+        type: "image",
+        url: "https://res.cloudinary.com/dt65gnluq/image/upload/v1755760007/pw_begijr.png"
+      }
+    ]
   },
   {
-    id: 2,
-    title: "E-commerce Platform",
-    description: "A full-stack e-commerce solution with user authentication, product management, and payment integration.",
+    id: 18,
+    title: "THESIS: SPODEL",
+    description: "Developing a descriptive analytic system for sales promotion data in B2C",
     blocks: [
       {
         id: "1",
-        type: "heading",
-        content: "E-commerce Solution"
-      },
-      {
-        id: "2",
         type: "text",
-        content: "A comprehensive e-commerce platform built with modern technologies. Features include user authentication, product catalog, shopping cart, and secure payment processing."
+        content: "We built a web-based system (codename Spodel) that ingests scanner / promotion data and runs three probabilistic models — Category Incidence, Brand Choice, and Purchase Quantity — to help marketers understand which promotions actually move product in fast-moving consumer goods (groceries, drugstore items). The app bundles model estimation, visualization, and an easy UI so non-technical users can upload data and get actionable summaries"
       },
       {
-        id: "3",
+        id: "1755760453180",
+        type: "video",
+        content: "https://res.cloudinary.com/dt65gnluq/video/upload/v1753255409/spodel-demo_1_rgh5xv.mp4"
+      },
+      {
+        id: "1755754823932",
         type: "subheading",
-        content: "Technical Implementation"
+        content: "Motivation — the problem we solved"
       },
       {
-        id: "4",
+        id: "1755755174282",
         type: "text",
-        content: "The platform uses React for the frontend with Redux for state management, Node.js and Express for the backend API, and MongoDB for data storage. Payment processing is handled through Stripe integration."
+        content: "Promotions are everywhere, but their effectiveness is noisy and context-dependent. Marketing teams want to answer questions like:\n\n- Which promotion types work best for which categories?\n\n- How do price, featuring, and display affect brand share?\n\n- How many units do consumers buy when they respond to a promo?\n\nManual analysis is slow and fragmentary — we set out to automate descriptive analytics for these questions and make the results accessible through a web app."
+      },
+      {
+        id: "1755759111481",
+        type: "gallery",
+        content: "  https://res.cloudinary.com/dt65gnluq/image/upload/v1755755788/carbo_loading_i0vtpt.png\n  https://res.cloudinary.com/dt65gnluq/image/upload/v1755755789/the_complete_journey_ftynvm.png",
+        images: [
+          "  https://res.cloudinary.com/dt65gnluq/image/upload/v1755755788/carbo_loading_i0vtpt.png",
+          "  https://res.cloudinary.com/dt65gnluq/image/upload/v1755755789/the_complete_journey_ftynvm.png"
+        ]
+      },
+      {
+        id: "1755755294336",
+        type: "image",
+        content: "https://res.cloudinary.com/dt65gnluq/image/upload/v1755755790/spodel-architecture_3_vn9edb.png"
+      },
+      {
+        id: "1755755875752",
+        type: "image",
+        content: "https://res.cloudinary.com/dt65gnluq/image/upload/v1755755789/system-workflow_cl6m66.png"
       }
     ],
-    technologies: "React,Node.js,Express,MongoDB,Stripe",
-    demo_url: "https://your-ecommerce-demo.com",
-    github_url: "https://github.com/cuongle090102/ecommerce-platform",
-    image_url: "https://via.placeholder.com/600x400/10B981/FFFFFF?text=E-commerce+Platform",
-    status: "published",
-    created_at: "2024-02-20T14:30:00Z"
-  },
-  {
-    id: 3,
-    title: "Task Management App",
-    description: "A collaborative task management application with real-time updates and team collaboration features.",
-    blocks: [
+    technologies: "Python,TypeScript,Javascript,Supabase,Flask,Angular,Plotly,Statistic Models",
+    demo_url: "",
+    github_url: "",
+    image_url: "https://res.cloudinary.com/dt65gnluq/image/upload/v1755756282/Thesis_tmzhcl.png",
+    status: "completed",
+    created_at: "2025-08-21T05:37:22.874087",
+    media: [
       {
-        id: "1",
-        type: "heading",
-        content: "Task Management System"
-      },
-      {
-        id: "2",
-        type: "text",
-        content: "A collaborative task management application designed for teams. Features real-time updates, drag-and-drop functionality, and comprehensive project tracking."
-      },
-      {
-        id: "3",
-        type: "subheading",
-        content: "Core Features"
-      },
-      {
-        id: "4",
-        type: "text",
-        content: "• Real-time collaboration\n• Drag-and-drop task management\n• Team member assignments\n• Project progress tracking\n• File attachments and comments\n• Email notifications"
+        caption: "Thumbnail",
+        type: "image",
+        url: "https://res.cloudinary.com/dt65gnluq/image/upload/v1755756282/Thesis_tmzhcl.png"
       }
-    ],
-    technologies: "React,Socket.io,Node.js,PostgreSQL",
-    demo_url: "https://your-taskmanager-demo.com",
-    github_url: "https://github.com/cuongle090102/task-manager",
-    image_url: "https://via.placeholder.com/600x400/8B5CF6/FFFFFF?text=Task+Manager",
-    status: "published",
-    created_at: "2024-03-10T09:15:00Z"
+    ]
   }
 ];
 
