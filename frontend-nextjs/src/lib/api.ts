@@ -2,7 +2,7 @@ import axios from 'axios';
 import { mockProjects, mockUser, mockFavorites } from './mockData';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:5000';
-const isProduction = false; // Disable production mode for local development
+const isProduction = process.env.NODE_ENV === 'production'; // Enable production mode for GitHub Pages
 
 // API client with mock data fallback for GitHub Pages
 export const apiClient = {
