@@ -3,12 +3,82 @@ export const mockProjects = [
   {
     id: 20,
     title: "PORTFOLIO-WEB: CUONG LE",
-    description: "",
+    description: "Building my personal portfolio website — a journey through modern full-stack development, from concept to deployment",
     blocks: [
       {
+        content: "When I set out to build my portfolio website, I wanted it to be more than just a static showcase. I wanted to create something that truly represented my development skills while solving real problems I face as a developer — easy content management, responsive design, and automated deployment. This is the story of how this portfolio came to life.",
         id: "1",
-        type: "text",
-        content: ""
+        type: "text"
+      },
+      {
+        content: "Why I built this portfolio",
+        id: "1758800001",
+        type: "subheading"
+      },
+      {
+        content: "I was tired of updating static HTML files every time I completed a new project. I needed something dynamic, something that would let me add projects, write detailed case studies, and share my personal interests (like my favorite films and athletes) without diving into code each time.\n\nMy goals were simple:\n- Create a professional showcase that reflects my personality\n- Build a content management system I actually want to use\n- Demonstrate my full-stack development skills\n- Deploy something that just works, automatically",
+        id: "1758800002",
+        type: "text"
+      },
+      {
+        content: "The tech stack decision",
+        id: "1758800003",
+        type: "subheading"
+      },
+      {
+        content: "For the frontend, I chose Next.js 15 with TypeScript because I wanted the benefits of server-side rendering and static generation, plus the developer experience of TypeScript's type safety. Tailwind CSS was a no-brainer for rapid, responsive design.\n\nFor the backend, I went with Flask and Python — familiar territory that lets me build robust APIs quickly. SQLAlchemy for the ORM because I wanted proper database relationships, and Cloudinary for media management because handling file uploads properly is surprisingly complex.\n\nThe goal was a modern stack that I know well enough to build quickly, but sophisticated enough to showcase real-world development practices.",
+        id: "1758800004",
+        type: "text"
+      },
+      {
+        content: "Building the content management system",
+        id: "1758800005",
+        type: "subheading"
+      },
+      {
+        content: "The heart of this project is the flexible content system. Instead of hardcoding project descriptions, I built a block-based editor where each project can have multiple content types — text paragraphs, subheadings, images, videos, and galleries.\n\nHere's how it works: when I add a project through the admin panel, I can create different 'blocks' of content. Want to add a video demo? Create a video block. Need to show multiple screenshots? Add a gallery block. This gives me the flexibility to tell each project's story properly.\n\nThe database design is straightforward — projects have a JSON field containing an array of content blocks, each with a type and content. Simple, but powerful.",
+        id: "1758800006",
+        type: "text"
+      },
+      {
+        content: "The favorites feature — adding personality",
+        id: "1758800007",
+        type: "subheading"
+      },
+      {
+        content: "Beyond just showcasing technical work, I wanted visitors to get to know me as a person. So I built a 'favorites' system where I can share my favorite films and athletes, organized in tiers (S-Tier masterpieces, A-Tier excellent, etc.).\n\nThis feature taught me a lot about flexible data modeling. How do you design a system that can handle both movies (with titles, years, posters) and athletes (with names, sports, achievements) in the same interface? The solution was a polymorphic design where each favorite has common fields plus type-specific metadata.",
+        id: "1758800008",
+        type: "text"
+      },
+      {
+        content: "Deployment automation — the magic behind the scenes",
+        id: "1758800009",
+        type: "subheading"
+      },
+      {
+        content: "One of my favorite parts of this project is the deployment pipeline. Every time I push code to GitHub, a GitHub Actions workflow automatically:\n- Installs dependencies\n- Builds the Next.js static site\n- Optimizes assets and images\n- Deploys to GitHub Pages\n- Invalidates caches\n\nNo manual deployment steps, no FTP uploads, no server management. Just git push and watch the magic happen. This workflow has saved me countless hours and eliminates deployment anxiety.\n\nThe best part? When I update project content through the admin panel, I can regenerate the static mockData.js file and push it, triggering a fresh deployment with the latest content.",
+        id: "1758800010",
+        type: "text"
+      },
+      {
+        content: "Challenges and solutions",
+        id: "1758800011",
+        type: "subheading"
+      },
+      {
+        content: "Building this wasn't without challenges:\n\n**Static vs Dynamic Content**: Since I'm deploying to GitHub Pages (static hosting), I needed a way to make database-driven content work with static generation. My solution was a hybrid approach — use the database for development and content management, then export data to static files for production.\n\n**Media Management**: Handling image uploads, video embeds, and galleries required integrating Cloudinary's API for optimization and delivery. The tricky part was building an intuitive interface for managing different media types.\n\n**Responsive Design**: Making complex layouts work across all device sizes, especially the project galleries and favorites sections, required careful CSS and component design.\n\n**Cache Management**: Getting deployment caches to invalidate properly when removing features like the demo banner taught me a lot about build optimization and cache busting.",
+        id: "1758800012",
+        type: "text"
+      },
+      {
+        content: "What I learned",
+        id: "1758800013",
+        type: "subheading"
+      },
+      {
+        content: "This project reinforced several important lessons:\n\n- **Start with the data model**: Getting the database schema right early saves massive refactoring later\n- **Automate everything**: Time spent setting up CI/CD pays dividends immediately\n- **Design for flexibility**: The block-based content system has made updating projects a joy instead of a chore\n- **Performance matters**: Static generation + CDN delivery makes this site blazingly fast\n- **Documentation through code**: This portfolio itself documents my development approach and technical decisions\n\nMost importantly, I learned that building tools for yourself — tools you'll actually use — is incredibly motivating. This portfolio isn't just a showcase; it's a content management system I genuinely enjoy using.",
+        id: "1758800014",
+        type: "text"
       }
     ],
     technologies: "Next.js,Python,Typescript,Cloudinary,Flask",
