@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useAuth } from '@/contexts/AuthContext'
 import { useEffect, useState } from 'react'
+import { mockProjects } from '@/lib/mockData'
 
 export default function HomePage() {
   const { isAuthenticated, logout } = useAuth();
@@ -14,6 +15,10 @@ export default function HomePage() {
     approach: false,
     contact: false
   });
+
+  // Get THESIS: SPODEL project
+  const spodelProject = mockProjects.find(project => project.title === "THESIS: SPODEL");
+  const videoBlock = spodelProject?.blocks?.find(block => block.type === "video");
 
   useEffect(() => {
     const observerOptions = {
@@ -417,74 +422,56 @@ export default function HomePage() {
           
           {/* Clean project grid */}
           <div className="space-y-24">
-            
-            <div className={`grid md:grid-cols-2 gap-16 items-center transition-all duration-1000 delay-200 ${isVisible.work ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-              <div className="group">
-                <div className="aspect-video bg-gradient-to-br from-blue-800 to-purple-800 rounded-lg mb-6 flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
-                  <div className="text-center">
-                    <div className="w-16 h-16 bg-gray-800 rounded-lg flex items-center justify-center mx-auto mb-4">
-                      <svg className="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                      </svg>
-                    </div>
-                    <p className="text-gray-300 text-sm">Machine Learning Model</p>
+
+            {spodelProject && (
+              <div className={`grid md:grid-cols-2 gap-16 items-center transition-all duration-1000 delay-200 ${isVisible.work ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+                <div className="group">
+                  <div className="aspect-video bg-black rounded-lg mb-6 overflow-hidden group-hover:scale-105 transition-transform duration-300">
+                    {videoBlock && (
+                      <video
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        className="w-full h-full object-cover"
+                        onLoadedData={(e) => e.currentTarget.play()}
+                      >
+                        <source src={videoBlock.content} type="video/mp4" />
+                        <div className="w-full h-full bg-gradient-to-br from-blue-800 to-purple-800 flex items-center justify-center">
+                          <div className="text-center">
+                            <div className="w-16 h-16 bg-gray-800 rounded-lg flex items-center justify-center mx-auto mb-4">
+                              <svg className="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h8m-8 4h8M3 5h18a2 2 0 012 2v10a2 2 0 01-2 2H3a2 2 0 01-2-2V7a2 2 0 012-2z" />
+                              </svg>
+                            </div>
+                            <p className="text-gray-300 text-sm">Video Demo</p>
+                          </div>
+                        </div>
+                      </video>
+                    )}
                   </div>
                 </div>
-              </div>
-              <div>
-                <h3 className="text-3xl font-bold text-white mb-4">Predictive Analytics Platform</h3>
-                <p className="text-gray-300 mb-6 leading-relaxed">
-                  Developed an end-to-end machine learning platform that processes real-time 
-                  customer data to predict churn with 94% accuracy, resulting in $2.3M 
-                  revenue retention for enterprise clients.
-                </p>
-                <div className="flex flex-wrap gap-3 mb-6">
-                  <span className="px-4 py-2 bg-gray-800 border border-gray-700 text-gray-200 text-sm hover:bg-gray-700 transition-colors">Python</span>
-                  <span className="px-4 py-2 bg-gray-800 border border-gray-700 text-gray-200 text-sm hover:bg-gray-700 transition-colors">TensorFlow</span>
-                  <span className="px-4 py-2 bg-gray-800 border border-gray-700 text-gray-200 text-sm hover:bg-gray-700 transition-colors">AWS</span>
-                </div>
-                <Link href="/projects" className="inline-flex items-center text-white hover:text-gray-300 transition-all duration-300 group">
-                  View Project 
-                  <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                  </svg>
-                </Link>
-              </div>
-            </div>
-            
-            <div className={`grid md:grid-cols-2 gap-16 items-center transition-all duration-1000 delay-400 ${isVisible.work ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-              <div className="md:order-2 group">
-                <div className="aspect-video bg-gradient-to-br from-green-800 to-blue-800 rounded-lg mb-6 flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
-                  <div className="text-center">
-                    <div className="w-16 h-16 bg-gray-800 rounded-lg flex items-center justify-center mx-auto mb-4">
-                      <svg className="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                      </svg>
-                    </div>
-                    <p className="text-gray-300 text-sm">Data Visualization</p>
+                <div>
+                  <h3 className="text-3xl font-bold text-white mb-4">{spodelProject.title}</h3>
+                  <p className="text-gray-300 mb-6 leading-relaxed">
+                    {spodelProject.description}
+                  </p>
+                  <div className="flex flex-wrap gap-3 mb-6">
+                    {spodelProject.technologies?.split(',').slice(0, 4).map((tech) => (
+                      <span key={tech} className="px-4 py-2 bg-gray-800 border border-gray-700 text-gray-200 text-sm hover:bg-gray-700 transition-colors">
+                        {tech}
+                      </span>
+                    ))}
                   </div>
+                  <Link href={`/projects/${spodelProject.id}`} className="inline-flex items-center text-white hover:text-gray-300 transition-all duration-300 group">
+                    View Project
+                    <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                    </svg>
+                  </Link>
                 </div>
               </div>
-              <div className="md:order-1">
-                <h3 className="text-3xl font-bold text-white mb-4">Real-time Analytics Dashboard</h3>
-                <p className="text-gray-300 mb-6 leading-relaxed">
-                  Built an intelligent dashboard that processes 500k+ daily events, 
-                  automatically detecting anomalies and generating insights that reduced 
-                  incident response time by 80%.
-                </p>
-                <div className="flex flex-wrap gap-3 mb-6">
-                  <span className="px-4 py-2 bg-gray-800 border border-gray-700 text-gray-200 text-sm hover:bg-gray-700 transition-colors">React</span>
-                  <span className="px-4 py-2 bg-gray-800 border border-gray-700 text-gray-200 text-sm hover:bg-gray-700 transition-colors">D3.js</span>
-                  <span className="px-4 py-2 bg-gray-800 border border-gray-700 text-gray-200 text-sm hover:bg-gray-700 transition-colors">Apache Kafka</span>
-                </div>
-                <Link href="/projects" className="inline-flex items-center text-white hover:text-gray-300 transition-all duration-300 group">
-                  View Project 
-                  <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                  </svg>
-                </Link>
-              </div>
-            </div>
+            )}
             
           </div>
           
