@@ -8,6 +8,7 @@ const nextConfig = {
   },
   basePath: process.env.NODE_ENV === 'production' ? '/Portfolio-website' : '',
   assetPrefix: process.env.NODE_ENV === 'production' ? '/Portfolio-website' : '',
+  // Force cache invalidation for DemoBanner removal
 }
 
 module.exports = nextConfig
