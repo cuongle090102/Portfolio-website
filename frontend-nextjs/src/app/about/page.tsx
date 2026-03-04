@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useAuth } from '@/contexts/AuthContext'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 
 const fallbackIcon = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHZpZXdCb3g9IjAgMCA0OCA0OCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByeD0iOCIgZmlsbD0iIzk3QTNBRiIvPgo8dGV4dCB4PSIyNCIgeT0iMjgiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMiIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPjw/PC90ZXh0Pgo8L3N2Zz4K';
 
@@ -78,6 +78,7 @@ const certifications = [
 
 export default function AboutPage() {
   const { isAuthenticated, logout } = useAuth();
+  const [scrollProgress, setScrollProgress] = useState(0);
   const [isVisible, setIsVisible] = useState({
     intro: false,
     skills: false,
@@ -110,13 +111,24 @@ export default function AboutPage() {
 
     setIsVisible(prev => ({ ...prev, intro: true }));
 
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      setScrollProgress(docHeight > 0 ? (scrollTop / docHeight) * 100 : 0);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
     return () => {
       observer.disconnect();
+      window.removeEventListener('scroll', handleScroll);
     };
   }, []);
 
   return (
     <div className="min-h-screen bg-white text-black page-transition">
+      {/* Scroll Progress Bar */}
+      <div className="scroll-progress" style={{ width: `${scrollProgress}%` }} />
+
       {/* Navigation */}
       <nav className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50">
         <div className="bg-white/40 backdrop-blur-md border border-white/40 rounded-full px-6 py-3 shadow-lg">
@@ -197,7 +209,7 @@ export default function AboutPage() {
             {/* Education */}
             <div className={`mb-12 transition-all duration-1000 delay-200 ${isVisible.education ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
               <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-6">Education</h3>
-              <div className="bg-white border border-gray-200 rounded-xl p-8">
+              <div className="bg-white border border-gray-200 rounded-xl p-8 card-hover">
                 <div className="flex flex-col md:flex-row md:items-start gap-6">
                   {/* University Logo */}
                   <div className="flex-shrink-0">
@@ -255,7 +267,7 @@ export default function AboutPage() {
                     href={cert.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg hover:border-gray-300 transition-all duration-300 flex flex-col"
+                    className="group bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg hover:border-gray-300 transition-all duration-300 flex flex-col card-hover"
                   >
                     {/* Icon */}
                     <div className="w-10 h-10 bg-green-50 border border-green-100 rounded-lg flex items-center justify-center mb-4">

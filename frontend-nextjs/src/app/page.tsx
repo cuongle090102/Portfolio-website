@@ -2,11 +2,12 @@
 
 import Link from 'next/link'
 import { useAuth } from '@/contexts/AuthContext'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef, useCallback } from 'react'
 import { mockProjects } from '@/lib/mockData'
 
 export default function HomePage() {
   const { isAuthenticated, logout } = useAuth();
+  const [scrollProgress, setScrollProgress] = useState(0);
   const [isVisible, setIsVisible] = useState({
     hero: false,
     work: false,
@@ -51,13 +52,25 @@ export default function HomePage() {
     // Set hero as visible immediately
     setIsVisible(prev => ({ ...prev, hero: true }));
 
+    // Scroll progress
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      setScrollProgress(docHeight > 0 ? (scrollTop / docHeight) * 100 : 0);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
     return () => {
       observer.disconnect();
+      window.removeEventListener('scroll', handleScroll);
     };
   }, []);
 
   return (
     <div className="min-h-screen bg-white text-black page-transition">
+      {/* Scroll Progress Bar */}
+      <div className="scroll-progress" style={{ width: `${scrollProgress}%` }} />
+
       {/* Navigation */}
       <nav className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50">
         <div className="bg-white/40 backdrop-blur-md border border-white/40 rounded-full px-6 py-3 shadow-lg">
@@ -134,12 +147,13 @@ export default function HomePage() {
 
         <div className="relative mt-[calc(4rem+65vh)]">
           <div className="max-w-5xl mx-auto px-6 lg:px-8 py-16">
-            <div
-              className={`transition-all duration-1200 delay-300 ${isVisible.hero ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-            >
-              <p className="text-xl lg:text-2xl text-gray-600 leading-relaxed text-center mx-auto max-w-3xl">
-                Data engineer building scalable pipelines, automating workflows,
-                and turning complex datasets into clear business insights.
+            <div className={`${isVisible.hero ? '' : 'opacity-0'}`}>
+              <p className="text-xl lg:text-2xl text-gray-600 leading-relaxed text-center mx-auto max-w-3xl word-reveal">
+                {isVisible.hero && 'Data engineer building scalable pipelines, automating workflows, and turning complex datasets into clear business insights.'.split(' ').map((word, i) => (
+                  <span key={i} style={{ animationDelay: `${0.3 + i * 0.05}s` }}>
+                    {word}{' '}
+                  </span>
+                ))}
               </p>
             </div>
           </div>
