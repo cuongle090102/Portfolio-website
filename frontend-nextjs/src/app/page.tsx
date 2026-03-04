@@ -151,7 +151,7 @@ export default function HomePage() {
               <p className="text-xl lg:text-2xl text-gray-600 leading-relaxed text-center mx-auto max-w-3xl word-reveal">
                 {isVisible.hero && 'I believe in data science rooted in clear thinking, built on systems that adapt and challenge conventional approaches.'.split(' ').map((word, i) => (
                   <span key={i} style={{ animationDelay: `${0.3 + i * 0.05}s` }}>
-                    {word}{' '}
+                    {word}
                   </span>
                 ))}
               </p>
