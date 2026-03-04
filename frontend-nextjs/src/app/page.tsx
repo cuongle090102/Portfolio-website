@@ -149,7 +149,7 @@ export default function HomePage() {
           <div className="max-w-5xl mx-auto px-6 lg:px-8 py-16">
             <div className={`${isVisible.hero ? '' : 'opacity-0'}`}>
               <p className="text-xl lg:text-2xl text-gray-600 leading-relaxed text-center mx-auto max-w-3xl word-reveal">
-                {isVisible.hero && 'Data engineer building scalable pipelines, automating workflows, and turning complex datasets into clear business insights.'.split(' ').map((word, i) => (
+                {isVisible.hero && 'I believe in data science rooted in clear thinking, built on systems that adapt and challenge conventional approaches.'.split(' ').map((word, i) => (
                   <span key={i} style={{ animationDelay: `${0.3 + i * 0.05}s` }}>
                     {word}{' '}
                   </span>
