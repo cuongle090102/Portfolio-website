@@ -1,6 +1,146 @@
 // Real data from database
 export const mockProjects = [
   {
+    id: 22,
+    title: "FINSTOCK",
+    description: "A simulated paper trading system for the Vietnamese stock market built on microservices architecture, featuring real-time data pipelines, adaptive trading strategies, and comprehensive Grafana monitoring dashboards",
+    blocks: [
+      {
+        content: "Finstock is a financial data engineering platform designed to simulate paper trading on the Vietnamese stock market. Built on a microservices architecture using Docker, the system ingests real-time market data from 30 stock symbols, executes regime-adaptive trading strategies, and provides comprehensive monitoring through Grafana dashboards.",
+        id: "1",
+        type: "text"
+      },
+      {
+        content: "https://res.cloudinary.com/dt65gnluq/video/upload/v1772608603/recording_xpy8qm.webm",
+        id: "1772608603001",
+        type: "video"
+      },
+      {
+        content: "System architecture",
+        id: "1772608603002",
+        type: "subheading"
+      },
+      {
+        content: "The platform follows a microservices design with distinct components orchestrated via Docker Compose and Apache Airflow:\n\n**Data Ingestion**: VnStock Producer fetches batch price data for 30 Vietnamese stock symbols and publishes to Kafka topics with Snappy compression across 3 partitions\n\n**Stream Processing & Storage**: TimescaleDB Consumer persists streaming data into PostgreSQL with the TimescaleDB extension, utilizing 5 hypertables and continuous aggregates for efficient time-series queries\n\n**Data Archival**: Parquet files are archived to MinIO (S3-compatible object storage) for long-term retention and batch analytics",
+        id: "1772608603003",
+        type: "text"
+      },
+      {
+        content: "Trading strategies & optimization",
+        id: "1772608603004",
+        type: "subheading"
+      },
+      {
+        content: "The trading engine implements four regime-specific strategies with adaptive switching:\n\n**MA Crossover**: Moving average crossover for trending markets\n**Breakout**: Price breakout detection for volatile conditions\n**Mean Reversion**: Statistical mean reversion for range-bound markets\n**Momentum**: Momentum-based signals for strong directional moves\n\nThe system includes backtesting and optimization frameworks using Bayesian, Grid, and Genetic algorithms — all compliant with Vietnamese market rules including commissions, taxes, and price limits. Trading operates during market hours (9:00–15:00 Vietnam time, UTC+7).",
+        id: "1772608603005",
+        type: "text"
+      },
+      {
+        content: "Orchestration & monitoring",
+        id: "1772608603006",
+        type: "subheading"
+      },
+      {
+        content: "Three production Airflow DAGs automate the core workflows:\n\n- **Backtesting DAG**: Runs strategy backtests against historical data\n- **P&L Reporting DAG**: Generates profit & loss reports for portfolio tracking\n- **Data Archival DAG**: Moves processed data to MinIO in Parquet format\n\nSeven Grafana dashboards provide real-time visibility into market data flow, trading performance, system health, and Kafka consumer metrics — enabling quick diagnosis and data-driven iteration on strategies.",
+        id: "1772608603007",
+        type: "text"
+      }
+    ],
+    technologies: "Python,Apache Kafka,PostgreSQL,TimescaleDB,MinIO,Apache Airflow,Grafana,Docker",
+    demo_url: "",
+    github_url: "https://github.com/cuongle090102/Finstock",
+    image_url: "https://res.cloudinary.com/dt65gnluq/video/upload/v1772608603/recording_xpy8qm.webm",
+    status: "completed",
+    created_at: "2025-03-01T10:00:00.000000",
+    media: [
+      {
+        caption: "Grafana Dashboard Demo",
+        type: "video",
+        url: "https://res.cloudinary.com/dt65gnluq/video/upload/v1772608603/recording_xpy8qm.webm"
+      }
+    ]
+  },
+  {
+    id: 21,
+    title: "CROSSY DUMMY CAT",
+    description: "A Frogger-style arcade game developed in C++ with SFML for CS202 course at VNU-HCMUS",
+    blocks: [
+      {
+        content: "Crossy Dummy Cat is a fast-paced arcade game where a brave cat attempts to navigate through busy city streets to find its way home. Developed as a team project for the Programming Systems course (CS202) at VNU-HCMUS, this game combines classic Frogger-style gameplay with modern C++ programming and the SFML multimedia framework.",
+        id: "1",
+        type: "text"
+      },
+      {
+        content: "https://www.youtube.com/watch?v=kQPsghc2jMQ",
+        id: "1755760453181",
+        type: "video"
+      },
+      {
+        content: "The concept — Classic arcade meets modern C++",
+        id: "1755754823933",
+        type: "subheading"
+      },
+      {
+        content: "The game follows a simple but addictive premise: guide a cat character across multiple lanes of traffic while avoiding obstacles and collecting coins. What makes it interesting is how we balanced classic arcade gameplay mechanics with modern programming practices.\n\nPlayers use arrow keys (←↑→↓) to navigate in four directions, dodging cars and trucks while the difficulty progressively increases. The further you go, the faster and more unpredictable the traffic becomes.",
+        id: "1755755174283",
+        type: "text"
+      },
+      {
+        content: "Core features",
+        id: "1758704952208",
+        type: "subheading"
+      },
+      {
+        content: "We implemented several key features to make the game engaging:\n\n**Dynamic Obstacles**: Different vehicle types with varying speeds and behaviors to keep gameplay challenging\n\n**Character System**: Multiple playable characters, each affecting the type of obstacles that appear\n\n**Coin Collection**: Strategic coin placement encourages players to take risks for higher scores\n\n**Traffic Lights**: A timing-based mechanic that adds puzzle elements to the arcade action\n\n**Save/Load System**: Players can save their progress and replay their best runs\n\n**Polished UI**: Clean interface with sound effects and audio feedback from Zapsplat",
+        id: "1758704959372",
+        type: "text"
+      },
+      {
+        content: "Technical implementation",
+        id: "1758704320299",
+        type: "subheading"
+      },
+      {
+        content: "The game is built entirely in C++ using SFML (Simple and Fast Multimedia Library) for graphics, audio, and input handling. We chose this stack because:\n\n**C++ Performance**: The language's low-level control and efficiency make it ideal for real-time game loops and collision detection\n\n**SFML Framework**: Provides a clean, intuitive API for 2D graphics, sprite management, and audio without the overhead of larger game engines\n\n**Object-Oriented Design**: We implemented classic OOP patterns — inheritance for different entity types, polymorphism for behavior variations, and encapsulation for game state management\n\n**Resource Management**: Careful memory handling and asset loading to ensure smooth gameplay without leaks",
+        id: "1758704747473",
+        type: "text"
+      },
+      {
+        content: "Team collaboration",
+        id: "1758704406096",
+        type: "subheading"
+      },
+      {
+        content: "This was a group project with four team members:\n- Hồ Trọng Bảo\n- Hà Thiên Lộc  \n- Phạm Đình Khôi\n- Lê Quốc Cường (me)\n\nWe divided responsibilities across game mechanics, graphics rendering, collision systems, and UI/audio. Working with Git for version control and coordinating features across multiple developers taught me valuable lessons about code organization and team communication.\n\nThe project involved 150+ commits as we iterated on gameplay balance, fixed bugs, and polished the user experience.",
+        id: "1758704443657",
+        type: "text"
+      },
+      {
+        content: "What I learned",
+        id: "1758704443658",
+        type: "subheading"
+      },
+      {
+        content: "Building a game from scratch with C++ and SFML reinforced several important concepts:\n\n- **Game Loop Architecture**: Understanding the update-render cycle and delta time for frame-independent movement\n- **Collision Detection**: Implementing efficient bounding box checks for real-time obstacle avoidance\n- **State Management**: Handling game states (menu, playing, paused, game over) cleanly\n- **Asset Pipeline**: Loading and managing sprites, sounds, and fonts efficiently\n- **C++ Best Practices**: Smart pointers, RAII, const correctness, and avoiding common pitfalls\n\nMost importantly, this project showed me how fundamental programming concepts (OOP, memory management, algorithms) come together to create an interactive, polished product that people actually enjoy playing.",
+        id: "1758704443659",
+        type: "text"
+      }
+    ],
+    technologies: "C++,SFML,OOP,Game Development",
+    demo_url: "",
+    github_url: "https://github.com/htrbao/CS202_Crossy_Road_Group10",
+    image_url: "https://raw.githubusercontent.com/htrbao/CS202_Crossy_Road_Group10/main/preview.png",
+    status: "completed",
+    created_at: "2024-12-15T10:00:00.000000",
+    media: [
+      {
+        caption: "",
+        type: "image",
+        url: "https://raw.githubusercontent.com/htrbao/CS202_Crossy_Road_Group10/main/preview.png"
+      }
+    ]
+  },
+  {
     id: 20,
     title: "PORTFOLIO-WEB: CUONG LE",
     description: "Building my personal portfolio website — a journey through modern full-stack development, from concept to deployment",
@@ -89,7 +229,7 @@ export const mockProjects = [
     created_at: "2025-08-21T07:08:12.477172",
     media: [
       {
-        caption: "Thumbnail",
+        caption: "",
         type: "image",
         url: "https://res.cloudinary.com/dt65gnluq/image/upload/v1755760007/pw_begijr.png"
       }

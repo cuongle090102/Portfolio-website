@@ -362,6 +362,20 @@ export default function FavoritesPage() {
 
   return (
     <div className="min-h-screen bg-white text-black">
+      {/* Header Name */}
+      <div className="absolute top-6 left-6 z-10">
+        <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
+          CUONG LE
+        </h1>
+      </div>
+
+      {/* About Link - Top Right */}
+      <div className="absolute top-6 right-6 z-10">
+        <Link href="/about" className="text-gray-900 hover:text-gray-600 transition-colors text-sm font-medium">
+          ABOUT
+        </Link>
+      </div>
+
       {/* Navigation */}
       <nav className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50">
         <div className="bg-white/80 backdrop-blur-md border border-gray-200 rounded-full px-6 py-3 shadow-lg">

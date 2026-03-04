@@ -293,10 +293,17 @@ export default function ProjectsPage() {
   return (
     <div className="min-h-screen bg-white text-black page-transition">
       {/* Header Name */}
-      <div className="absolute top-6 left-1/2 transform -translate-x-1/2 z-10">
+      <div className="absolute top-6 left-6 z-10">
         <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
           CUONG LE
         </h1>
+      </div>
+
+      {/* About Link - Top Right */}
+      <div className="absolute top-6 right-6 z-10">
+        <Link href="/about" className="text-gray-900 hover:text-gray-600 transition-colors text-sm font-medium">
+          ABOUT
+        </Link>
       </div>
 
       {/* 3-Section Layout */}
@@ -470,14 +477,14 @@ export default function ProjectsPage() {
                   Work
                   <div className="absolute bottom-0 left-0 w-full h-0.5 bg-gray-900"></div>
                 </Link>
-                <Link 
-                  href="/favorites" 
+                <Link
+                  href="/favorites"
                   className="text-gray-900 text-sm md:text-base font-medium hover:text-gray-600 transition-colors duration-300"
                 >
                   Favorites
                 </Link>
-                <Link 
-                  href="/admin" 
+                <Link
+                  href="/admin"
                   className="text-gray-900 text-sm md:text-base font-medium hover:text-gray-600 transition-colors duration-300"
                 >
                   Admin
