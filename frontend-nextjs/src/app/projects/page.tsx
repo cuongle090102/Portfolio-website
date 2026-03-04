@@ -362,43 +362,54 @@ export default function ProjectsPage() {
 
             {/* Section 2: Project Display */}
             <div className="w-1/2 flex flex-col items-center justify-center pt-20">
-              <div className="relative w-full min-h-[300px] bg-gray-100 border border-gray-200 flex items-center justify-center rounded-lg overflow-hidden">
+              <div
+                className={`relative w-full min-h-[300px] bg-gray-100 border border-gray-200 flex items-center justify-center rounded-lg overflow-hidden ${previewProject ? 'cursor-pointer group/preview' : ''}`}
+                onClick={() => previewProject && setSelectedProject(previewProject)}
+              >
                 {previewProject ? (
-                  previewProject.image_url ? (
-                    <img
-                      key={previewProject.id}
-                      src={previewProject.image_url}
-                      alt={previewProject.title}
-                      className="w-full h-auto max-h-[70vh] object-contain transition-all duration-500 ease-out rounded-lg"
-                      style={{ 
-                        minHeight: '300px',
-                        backgroundColor: '#f9fafb'
-                      }}
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.style.display = 'none';
-                        if (target.parentElement) {
-                          target.parentElement.innerHTML = `
-                            <div class="flex flex-col items-center justify-center h-full min-h-[300px] text-gray-600">
+                  <>
+                    {previewProject.image_url ? (
+                      <img
+                        key={previewProject.id}
+                        src={previewProject.image_url}
+                        alt={previewProject.title}
+                        className="w-full h-auto max-h-[70vh] object-contain transition-all duration-500 ease-out rounded-lg group-hover/preview:scale-[1.02]"
+                        style={{
+                          minHeight: '300px',
+                          backgroundColor: '#f9fafb'
+                        }}
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                          if (target.parentElement) {
+                            const fallback = document.createElement('div');
+                            fallback.className = 'flex flex-col items-center justify-center h-full min-h-[300px] text-gray-600';
+                            fallback.innerHTML = `
                               <svg class="w-16 h-16 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                               </svg>
-                              <span class="text-lg">${previewProject.title}</span>
-                              <span class="text-sm">Image not available</span>
-                            </div>
-                          `;
-                        }
-                      }}
-                    />
-                  ) : (
-                    <div className="flex flex-col items-center justify-center h-full min-h-[300px] text-gray-600">
-                      <svg className="w-16 h-16 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                      </svg>
-                      <span className="text-lg">{previewProject.title}</span>
-                      <span className="text-sm">No preview available</span>
+                              <span class="text-lg">Click to view project</span>
+                            `;
+                            target.parentElement.appendChild(fallback);
+                          }
+                        }}
+                      />
+                    ) : (
+                      <div className="flex flex-col items-center justify-center h-full min-h-[300px] text-gray-600">
+                        <svg className="w-16 h-16 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                        <span className="text-lg">{previewProject.title}</span>
+                        <span className="text-sm">Click to view project</span>
+                      </div>
+                    )}
+                    {/* Click hint overlay */}
+                    <div className="absolute inset-0 bg-black/0 group-hover/preview:bg-black/10 transition-all duration-300 flex items-center justify-center">
+                      <div className="opacity-0 group-hover/preview:opacity-100 transition-opacity duration-300 bg-black/60 backdrop-blur-sm text-white px-5 py-2.5 rounded-full text-sm font-medium">
+                        Click to view details
+                      </div>
                     </div>
-                  )
+                  </>
                 ) : (
                   <div className="flex flex-col items-center justify-center h-full min-h-[300px] text-gray-600">
                     <svg className="w-16 h-16 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
