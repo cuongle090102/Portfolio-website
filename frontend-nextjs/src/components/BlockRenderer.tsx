@@ -232,7 +232,7 @@ export default function BlockRenderer({ blocks }: BlockRendererProps) {
                           }
                         }}
                       >
-                        <source src={block.content} type="video/mp4" />
+                        <source src={block.content} type={block.content.endsWith('.webm') ? 'video/webm' : 'video/mp4'} />
                         Your browser does not support the video tag.
                       </video>
                     )}

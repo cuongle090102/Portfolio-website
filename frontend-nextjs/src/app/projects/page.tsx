@@ -554,7 +554,7 @@ export default function ProjectsPage() {
                                     `;
                                   }}
                                 >
-                                  <source src={mediaItem.url} type="video/mp4" />
+                                  <source src={mediaItem.url} type={mediaItem.url.endsWith('.webm') ? 'video/webm' : 'video/mp4'} />
                                   Your browser does not support the video tag.
                                 </video>
                               )}

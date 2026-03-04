@@ -49,7 +49,7 @@ export const mockProjects = [
     technologies: "Python,Apache Kafka,PostgreSQL,TimescaleDB,MinIO,Apache Airflow,Grafana,Docker",
     demo_url: "",
     github_url: "https://github.com/cuongle090102/Finstock",
-    image_url: "https://res.cloudinary.com/dt65gnluq/video/upload/v1772608603/recording_xpy8qm.webm",
+    image_url: "",
     status: "completed",
     created_at: "2025-03-01T10:00:00.000000",
     media: [
