@@ -7,7 +7,7 @@ import { Toaster } from 'react-hot-toast'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'My Portfolio',
+  title: 'Cuong Le',
   description: 'A showcase of my work and technical expertise',
 }
 
