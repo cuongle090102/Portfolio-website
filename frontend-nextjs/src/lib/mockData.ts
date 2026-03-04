@@ -11,7 +11,7 @@ export const mockProjects = [
         type: "text"
       },
       {
-        content: "https://res.cloudinary.com/dt65gnluq/video/upload/v1772608603/recording_xpy8qm.webm",
+        content: "https://res.cloudinary.com/dt65gnluq/video/upload/v1772612032/recording_mkvpnh.mp4",
         id: "1772608603001",
         type: "video"
       },
