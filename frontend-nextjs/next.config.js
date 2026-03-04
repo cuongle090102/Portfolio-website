@@ -6,8 +6,8 @@ const nextConfig = {
     domains: ['res.cloudinary.com', 'localhost'],
     unoptimized: true,
   },
-  basePath: process.env.NODE_ENV === 'production' ? '/Portfolio-website' : '',
-  assetPrefix: process.env.NODE_ENV === 'production' ? '/Portfolio-website' : '',
+  basePath: process.env.GITHUB_PAGES === 'true' ? '/Portfolio-website' : '',
+  assetPrefix: process.env.GITHUB_PAGES === 'true' ? '/Portfolio-website' : '',
   // Force cache invalidation for DemoBanner removal
 }
 
