@@ -294,9 +294,9 @@ export default function ProjectsPage() {
     <div className="min-h-screen bg-white text-black page-transition">
       {/* Header Name */}
       <div className="absolute top-6 left-6 z-10">
-        <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
+        <Link href="/" className="text-2xl font-bold text-gray-900 tracking-tight hover:text-gray-600 transition-colors">
           CUONG LE
-        </h1>
+        </Link>
       </div>
 
       {/* About Link - Top Right */}
