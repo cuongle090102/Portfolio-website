@@ -159,28 +159,26 @@ export default function HomePage() {
           </div>
 
           <div className="space-y-20">
-            {/* Finstock — Featured (full-width) */}
-            {finstockProject && (
+            {/* SPODEL — Featured (full-width) */}
+            {spodelProject && spodelVideo && (
               <div className={`transition-all duration-1000 delay-200 ${isVisible.work ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
                 <div className="group relative rounded-2xl overflow-hidden">
                   <div className="aspect-video bg-black">
-                    {finstockVideo && (
-                      <video
-                        autoPlay loop muted playsInline
-                        className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700"
-                        onLoadedData={(e) => e.currentTarget.play()}
-                      >
-                        <source src={finstockVideo.content} type="video/mp4" />
-                      </video>
-                    )}
+                    <video
+                      autoPlay loop muted playsInline
+                      className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700"
+                      onLoadedData={(e) => e.currentTarget.play()}
+                    >
+                      <source src={spodelVideo.content} type="video/mp4" />
+                    </video>
                   </div>
                   {/* Overlay info */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end">
                     <div className="p-8 md:p-10 w-full">
-                      <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">{finstockProject.title}</h3>
-                      <p className="text-gray-300 text-sm md:text-base max-w-2xl mb-4 line-clamp-2">{finstockProject.description}</p>
+                      <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">{spodelProject.title}</h3>
+                      <p className="text-gray-300 text-sm md:text-base max-w-2xl mb-4 line-clamp-2">{spodelProject.description}</p>
                       <div className="flex flex-wrap gap-2">
-                        {finstockProject.technologies?.split(',').slice(0, 5).map((tech) => (
+                        {spodelProject.technologies?.split(',').slice(0, 5).map((tech) => (
                           <span key={tech} className="px-3 py-1 bg-white/10 backdrop-blur-sm text-white text-xs rounded-full border border-white/20">
                             {tech.trim()}
                           </span>
@@ -189,11 +187,10 @@ export default function HomePage() {
                     </div>
                   </div>
                 </div>
-                {/* Title below for non-hover */}
                 <div className="mt-4 flex items-center justify-between">
                   <div>
-                    <h3 className="text-xl font-bold text-white">{finstockProject.title}</h3>
-                    <p className="text-sm text-gray-500 mt-1">Data Engineering &middot; Real-time Pipeline &middot; Monitoring</p>
+                    <h3 className="text-xl font-bold text-white">{spodelProject.title}</h3>
+                    <p className="text-sm text-gray-500 mt-1">Analytics &middot; Statistical Modeling &middot; Research</p>
                   </div>
                   <Link href="/projects" className="text-sm text-gray-400 hover:text-white transition-colors inline-flex items-center gap-1 group/link">
                     View Details
@@ -205,11 +202,32 @@ export default function HomePage() {
               </div>
             )}
 
-            {/* Two-column: Crossy Road + SPODEL */}
+            {/* Two-column: Finstock + Crossy Road */}
             <div className="grid md:grid-cols-2 gap-8">
+              {/* Finstock */}
+              {finstockProject && finstockVideo && (
+                <div className={`transition-all duration-1000 delay-300 ${isVisible.work ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+                  <div className="group relative rounded-2xl overflow-hidden">
+                    <div className="aspect-video bg-black">
+                      <video
+                        autoPlay loop muted playsInline
+                        className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500"
+                        onLoadedData={(e) => e.currentTarget.play()}
+                      >
+                        <source src={finstockVideo.content} type="video/mp4" />
+                      </video>
+                    </div>
+                  </div>
+                  <div className="mt-4">
+                    <h3 className="text-lg font-bold text-white">{finstockProject.title}</h3>
+                    <p className="text-sm text-gray-500 mt-1">Data Engineering &middot; Real-time Pipeline &middot; Monitoring</p>
+                  </div>
+                </div>
+              )}
+
               {/* Crossy Dummy Cat */}
               {crossyProject && crossyVideo && (
-                <div className={`transition-all duration-1000 delay-300 ${isVisible.work ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+                <div className={`transition-all duration-1000 delay-400 ${isVisible.work ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
                   <div className="group relative rounded-2xl overflow-hidden">
                     <div className="aspect-video bg-black">
                       <iframe
@@ -225,38 +243,6 @@ export default function HomePage() {
                   <div className="mt-4">
                     <h3 className="text-lg font-bold text-white">{crossyProject.title}</h3>
                     <p className="text-sm text-gray-500 mt-1">Game Development &middot; C++ &middot; SFML</p>
-                  </div>
-                </div>
-              )}
-
-              {/* THESIS: SPODEL */}
-              {spodelProject && spodelVideo && (
-                <div className={`transition-all duration-1000 delay-400 ${isVisible.work ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-                  <div className="group relative rounded-2xl overflow-hidden">
-                    <div className="aspect-video bg-black">
-                      {spodelVideo.content.includes('youtube.com') || spodelVideo.content.includes('youtu.be') ? (
-                        <iframe
-                          src={`https://www.youtube.com/embed/${spodelVideo.content.includes('v=') ? spodelVideo.content.split('v=')[1]?.split('&')[0] : spodelVideo.content.split('youtu.be/')[1]?.split('?')[0]}?autoplay=1&mute=1&loop=1&playlist=${spodelVideo.content.includes('v=') ? spodelVideo.content.split('v=')[1]?.split('&')[0] : spodelVideo.content.split('youtu.be/')[1]?.split('?')[0]}&controls=0&showinfo=0&modestbranding=1`}
-                          title={spodelProject.title}
-                          className="w-full h-full"
-                          frameBorder="0"
-                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                          allowFullScreen
-                        />
-                      ) : (
-                        <video
-                          autoPlay loop muted playsInline
-                          className="w-full h-full object-cover"
-                          onLoadedData={(e) => e.currentTarget.play()}
-                        >
-                          <source src={spodelVideo.content} type="video/mp4" />
-                        </video>
-                      )}
-                    </div>
-                  </div>
-                  <div className="mt-4">
-                    <h3 className="text-lg font-bold text-white">{spodelProject.title}</h3>
-                    <p className="text-sm text-gray-500 mt-1">Analytics &middot; Machine Learning &middot; Research</p>
                   </div>
                 </div>
               )}
