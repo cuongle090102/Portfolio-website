@@ -113,7 +113,7 @@ export default function LoginForm() {
         {/* Demo Credentials */}
         <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4">
           <p className="text-sm text-yellow-800">
-            <strong>Demo:</strong> Use password "admin123" to access admin panel
+            <strong>Demo:</strong> Use password "demo123" to access admin panel
           </p>
         </div>
       </div>
