@@ -49,14 +49,14 @@ export const mockProjects = [
     technologies: "Python,Apache Kafka,PostgreSQL,TimescaleDB,MinIO,Apache Airflow,Grafana,Docker",
     demo_url: "",
     github_url: "https://github.com/cuongle090102/Finstock",
-    image_url: "",
+    image_url: "https://res.cloudinary.com/dt65gnluq/video/upload/so_0/v1772612032/recording_mkvpnh.jpg",
     status: "completed",
     created_at: "2025-03-01T10:00:00.000000",
     media: [
       {
         caption: "Grafana Dashboard Demo",
         type: "video",
-        url: "https://res.cloudinary.com/dt65gnluq/video/upload/v1772608603/recording_xpy8qm.webm"
+        url: "https://res.cloudinary.com/dt65gnluq/video/upload/v1772612032/recording_mkvpnh.mp4"
       }
     ]
   },
@@ -129,14 +129,14 @@ export const mockProjects = [
     technologies: "C++,SFML,OOP,Game Development",
     demo_url: "",
     github_url: "https://github.com/htrbao/CS202_Crossy_Road_Group10",
-    image_url: "https://raw.githubusercontent.com/htrbao/CS202_Crossy_Road_Group10/main/preview.png",
+    image_url: "https://img.youtube.com/vi/kQPsghc2jMQ/maxresdefault.jpg",
     status: "completed",
     created_at: "2024-12-15T10:00:00.000000",
     media: [
       {
         caption: "",
         type: "image",
-        url: "https://raw.githubusercontent.com/htrbao/CS202_Crossy_Road_Group10/main/preview.png"
+        url: "https://img.youtube.com/vi/kQPsghc2jMQ/maxresdefault.jpg"
       }
     ]
   },
