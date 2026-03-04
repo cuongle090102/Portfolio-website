@@ -14,9 +14,15 @@ export default function HomePage() {
     contact: false
   });
 
-  // Get THESIS: SPODEL project
+  // Get featured projects with videos
+  const finstockProject = mockProjects.find(project => project.title === "FINSTOCK");
+  const finstockVideo = finstockProject?.blocks?.find(block => block.type === "video");
+
+  const crossyProject = mockProjects.find(project => project.title === "CROSSY DUMMY CAT");
+  const crossyVideo = crossyProject?.blocks?.find(block => block.type === "video");
+
   const spodelProject = mockProjects.find(project => project.title === "THESIS: SPODEL");
-  const videoBlock = spodelProject?.blocks?.find(block => block.type === "video");
+  const spodelVideo = spodelProject?.blocks?.find(block => block.type === "video");
 
   useEffect(() => {
     const observerOptions = {
@@ -114,125 +120,152 @@ export default function HomePage() {
 
         {/* Full Width Hero Video */}
         <div className="absolute top-16 left-0 right-0">
-          <div className="w-full h-[60vh] bg-black overflow-hidden">
-            <video 
-              autoPlay 
-              loop 
-              muted 
-              playsInline
-              className="w-full h-full object-cover filter grayscale"
+          <div className="w-full h-[65vh] bg-black overflow-hidden">
+            <video
+              autoPlay loop muted playsInline
+              className="w-full h-full object-cover"
               onLoadedData={(e) => e.currentTarget.play()}
-              style={{ filter: 'grayscale(100%) contrast(1.2)' }}
+              style={{ filter: 'grayscale(100%) contrast(1.1)' }}
             >
               <source src="https://videos.pexels.com/video-files/3571264/3571264-uhd_2560_1440_30fps.mp4" type="video/mp4" />
-              {/* Fallback for browsers that don't support video */}
-              <div className="w-full h-full bg-gradient-to-br from-gray-900 to-gray-700 flex items-center justify-center text-white">
-                <div className="text-center">
-                  <div className="w-20 h-20 mx-auto mb-4 bg-white/10 rounded-lg flex items-center justify-center">
-                    <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h8m-8 4h8M3 5h18a2 2 0 012 2v10a2 2 0 01-2 2H3a2 2 0 01-2-2V7a2 2 0 012-2z" />
-                    </svg>
-                  </div>
-                  <p className="text-sm text-gray-300">Landscape Video</p>
-                </div>
-              </div>
             </video>
           </div>
         </div>
 
-        <div className="relative mt-[calc(4rem+60vh)]">
-          <div className="max-w-6xl mx-auto px-6 lg:px-8 py-20">
-            {/* Mission Statement */}
-            <div 
-              className={`mb-16 transition-all duration-1200 delay-300 ${isVisible.hero ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+        <div className="relative mt-[calc(4rem+65vh)]">
+          <div className="max-w-5xl mx-auto px-6 lg:px-8 py-16">
+            <div
+              className={`transition-all duration-1200 delay-300 ${isVisible.hero ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
             >
-              <p className="text-2xl lg:text-3xl text-gray-900 leading-tight max-w-4xl font-light text-center mx-auto">
-                I believe in data science rooted in clear thinking, 
-                built on systems that <em>adapt</em> and challenge conventional approaches.
+              <p className="text-xl lg:text-2xl text-gray-600 leading-relaxed text-center mx-auto max-w-3xl">
+                Data engineer building scalable pipelines, automating workflows,
+                and turning complex datasets into clear business insights.
               </p>
             </div>
-
-
           </div>
         </div>
         
       </section>
       {/* Selected Work Preview */}
       <section className="py-32 bg-gray-900" data-section="work">
-        <div className="max-w-6xl mx-auto px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className={`mb-20 transition-all duration-1000 ${isVisible.work ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-            <h2 className="text-6xl font-bold text-white mb-8 leading-tight">
+            <h2 className="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight">
               Selected Work
             </h2>
-            <p className="text-xl text-gray-300 max-w-3xl leading-relaxed">
-              A curated collection of data science projects that showcase expertise 
-              in machine learning, analytics, and intelligent automation.
+            <p className="text-lg text-gray-400 max-w-2xl">
+              Featured projects in data engineering, analytics, and software development.
             </p>
           </div>
-          
-          {/* Clean project grid */}
-          <div className="space-y-24">
 
-            {spodelProject && (
+          <div className="space-y-20">
+            {/* Finstock — Featured (full-width) */}
+            {finstockProject && (
               <div className={`transition-all duration-1000 delay-200 ${isVisible.work ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-                {/* Full-width video */}
-                <div className="group mb-10">
-                  <div className="aspect-[21/9] bg-black rounded-xl overflow-hidden group-hover:scale-[1.02] transition-transform duration-500">
-                    {videoBlock && (
+                <div className="group relative rounded-2xl overflow-hidden">
+                  <div className="aspect-video bg-black">
+                    {finstockVideo && (
                       <video
-                        autoPlay
-                        loop
-                        muted
-                        playsInline
-                        className="w-full h-full object-cover"
+                        autoPlay loop muted playsInline
+                        className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700"
                         onLoadedData={(e) => e.currentTarget.play()}
                       >
-                        <source src={videoBlock.content} type="video/mp4" />
-                        <div className="w-full h-full bg-gradient-to-br from-blue-800 to-purple-800 flex items-center justify-center">
-                          <div className="text-center">
-                            <div className="w-16 h-16 bg-gray-800 rounded-lg flex items-center justify-center mx-auto mb-4">
-                              <svg className="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h8m-8 4h8M3 5h18a2 2 0 012 2v10a2 2 0 01-2 2H3a2 2 0 01-2-2V7a2 2 0 012-2z" />
-                              </svg>
-                            </div>
-                            <p className="text-gray-300 text-sm">Video Demo</p>
-                          </div>
-                        </div>
+                        <source src={finstockVideo.content} type="video/mp4" />
                       </video>
                     )}
                   </div>
-                </div>
-                {/* Project info below video */}
-                <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
-                  <div className="flex-1">
-                    <h3 className="text-3xl font-bold text-white mb-3">{spodelProject.title}</h3>
-                    <p className="text-gray-300 leading-relaxed max-w-2xl">
-                      {spodelProject.description}
-                    </p>
-                  </div>
-                  <div className="flex flex-col items-start md:items-end gap-4">
-                    <div className="flex flex-wrap gap-3">
-                      {spodelProject.technologies?.split(',').slice(0, 4).map((tech) => (
-                        <span key={tech} className="px-4 py-2 bg-gray-800 border border-gray-700 text-gray-200 text-sm hover:bg-gray-700 transition-colors">
-                          {tech}
-                        </span>
-                      ))}
+                  {/* Overlay info */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end">
+                    <div className="p-8 md:p-10 w-full">
+                      <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">{finstockProject.title}</h3>
+                      <p className="text-gray-300 text-sm md:text-base max-w-2xl mb-4 line-clamp-2">{finstockProject.description}</p>
+                      <div className="flex flex-wrap gap-2">
+                        {finstockProject.technologies?.split(',').slice(0, 5).map((tech) => (
+                          <span key={tech} className="px-3 py-1 bg-white/10 backdrop-blur-sm text-white text-xs rounded-full border border-white/20">
+                            {tech.trim()}
+                          </span>
+                        ))}
+                      </div>
                     </div>
-                    <Link href={`/projects/${spodelProject.id}`} className="inline-flex items-center text-white hover:text-gray-300 transition-all duration-300 group">
-                      View Project
-                      <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                      </svg>
-                    </Link>
                   </div>
+                </div>
+                {/* Title below for non-hover */}
+                <div className="mt-4 flex items-center justify-between">
+                  <div>
+                    <h3 className="text-xl font-bold text-white">{finstockProject.title}</h3>
+                    <p className="text-sm text-gray-500 mt-1">Data Engineering &middot; Real-time Pipeline &middot; Monitoring</p>
+                  </div>
+                  <Link href="/projects" className="text-sm text-gray-400 hover:text-white transition-colors inline-flex items-center gap-1 group/link">
+                    View Details
+                    <svg className="w-3.5 h-3.5 group-hover/link:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </Link>
                 </div>
               </div>
             )}
-            
+
+            {/* Two-column: Crossy Road + SPODEL */}
+            <div className="grid md:grid-cols-2 gap-8">
+              {/* Crossy Dummy Cat */}
+              {crossyProject && crossyVideo && (
+                <div className={`transition-all duration-1000 delay-300 ${isVisible.work ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+                  <div className="group relative rounded-2xl overflow-hidden">
+                    <div className="aspect-video bg-black">
+                      <iframe
+                        src={`https://www.youtube.com/embed/${crossyVideo.content.split('v=')[1]?.split('&')[0]}?autoplay=1&mute=1&loop=1&playlist=${crossyVideo.content.split('v=')[1]?.split('&')[0]}&controls=0&showinfo=0&modestbranding=1`}
+                        title={crossyProject.title}
+                        className="w-full h-full"
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      />
+                    </div>
+                  </div>
+                  <div className="mt-4">
+                    <h3 className="text-lg font-bold text-white">{crossyProject.title}</h3>
+                    <p className="text-sm text-gray-500 mt-1">Game Development &middot; C++ &middot; SFML</p>
+                  </div>
+                </div>
+              )}
+
+              {/* THESIS: SPODEL */}
+              {spodelProject && spodelVideo && (
+                <div className={`transition-all duration-1000 delay-400 ${isVisible.work ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+                  <div className="group relative rounded-2xl overflow-hidden">
+                    <div className="aspect-video bg-black">
+                      {spodelVideo.content.includes('youtube.com') || spodelVideo.content.includes('youtu.be') ? (
+                        <iframe
+                          src={`https://www.youtube.com/embed/${spodelVideo.content.includes('v=') ? spodelVideo.content.split('v=')[1]?.split('&')[0] : spodelVideo.content.split('youtu.be/')[1]?.split('?')[0]}?autoplay=1&mute=1&loop=1&playlist=${spodelVideo.content.includes('v=') ? spodelVideo.content.split('v=')[1]?.split('&')[0] : spodelVideo.content.split('youtu.be/')[1]?.split('?')[0]}&controls=0&showinfo=0&modestbranding=1`}
+                          title={spodelProject.title}
+                          className="w-full h-full"
+                          frameBorder="0"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                        />
+                      ) : (
+                        <video
+                          autoPlay loop muted playsInline
+                          className="w-full h-full object-cover"
+                          onLoadedData={(e) => e.currentTarget.play()}
+                        >
+                          <source src={spodelVideo.content} type="video/mp4" />
+                        </video>
+                      )}
+                    </div>
+                  </div>
+                  <div className="mt-4">
+                    <h3 className="text-lg font-bold text-white">{spodelProject.title}</h3>
+                    <p className="text-sm text-gray-500 mt-1">Analytics &middot; Machine Learning &middot; Research</p>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
-          
-          <div className={`text-center mt-24 transition-all duration-1000 delay-600 ${isVisible.work ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-            <Link href="/projects" className="inline-flex items-center bg-white text-black px-8 py-4 font-medium hover:bg-gray-200 transition-all duration-300 hover:scale-105">
+
+          {/* View All */}
+          <div className={`text-center mt-20 transition-all duration-1000 delay-600 ${isVisible.work ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+            <Link href="/projects" className="inline-flex items-center bg-white text-black px-8 py-4 font-medium rounded-full hover:bg-gray-200 transition-all duration-300 hover:scale-105">
               View All Projects
               <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
