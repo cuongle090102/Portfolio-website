@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useState, useRef, useEffect } from 'react'
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
 import { apiClient } from '@/lib/api'
+import ThemeToggle from '@/components/ThemeToggle'
 
 interface Film {
   title: string
@@ -361,52 +362,59 @@ export default function FavoritesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white text-black">
+    <div className="min-h-screen bg-white dark:bg-slate-950 text-black dark:text-white transition-colors duration-300">
       {/* Header Name */}
       <div className="absolute top-6 left-6 z-10">
-        <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-slate-100 tracking-tight">
           CUONG LE
         </h1>
       </div>
 
       {/* About Link - Top Right */}
       <div className="absolute top-6 right-6 z-10">
-        <Link href="/about" className="text-gray-900 hover:text-gray-600 transition-colors text-sm font-medium">
+        <Link href="/about" className="text-gray-900 dark:text-slate-100 hover:text-gray-600 dark:hover:text-gray-400 transition-colors text-sm font-medium">
           ABOUT
         </Link>
       </div>
 
       {/* Navigation */}
       <nav className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50">
-        <div className="bg-white/80 backdrop-blur-md border border-gray-200 rounded-full px-6 py-3 shadow-lg">
+        <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border border-gray-200 dark:border-slate-700 rounded-full px-6 py-3 shadow-lg">
           <div className="flex items-center space-x-6">
-            <Link href="/" className="text-black hover:text-gray-600 transition-colors text-sm">
+            <Link href="/" className="text-black dark:text-white hover:text-gray-600 dark:hover:text-gray-300 transition-colors text-sm">
               Index
             </Link>
-            <div className="w-px h-4 bg-gray-300"></div>
-            <Link href="/projects" className="text-black hover:text-gray-600 transition-colors text-sm">
+            <div className="w-px h-4 bg-gray-300 dark:bg-slate-600"></div>
+            <Link href="/projects" className="text-black dark:text-white hover:text-gray-600 dark:hover:text-gray-300 transition-colors text-sm">
               Work
             </Link>
-            <div className="w-px h-4 bg-gray-300"></div>
-            <Link href="/favorites" className="text-black hover:text-gray-600 transition-colors text-sm">
+            <div className="w-px h-4 bg-gray-300 dark:bg-slate-600"></div>
+            <Link href="/favorites" className="text-black dark:text-white hover:text-gray-600 dark:hover:text-gray-300 transition-colors text-sm">
               Favorites
             </Link>
-            <div className="w-px h-4 bg-gray-300"></div>
-            <Link href="/admin" className="text-black hover:text-gray-600 transition-colors text-sm">
+            <div className="w-px h-4 bg-gray-300 dark:bg-slate-600"></div>
+            <Link href="/admin" className="text-black dark:text-white hover:text-gray-600 dark:hover:text-gray-300 transition-colors text-sm">
               Admin
             </Link>
           </div>
         </div>
       </nav>
 
+      {/* Theme Toggle — bottom left */}
+      <div className="fixed left-6 bottom-6 z-50">
+        <div className="bg-white/70 dark:bg-slate-900/70 backdrop-blur-md border border-gray-200/50 dark:border-slate-700/50 rounded-full p-1.5 shadow-sm hover:shadow-md transition-all duration-300">
+          <ThemeToggle />
+        </div>
+      </div>
+
       {/* Header */}
       <section className="pt-32 pb-16">
         <div className="max-w-6xl mx-auto px-6 lg:px-8">
           <div className="text-center">
-            <h1 className="text-6xl font-bold text-black mb-8 leading-tight">
+            <h1 className="text-6xl font-bold text-black dark:text-white mb-8 leading-tight">
               My Favorites
             </h1>
-            <p className="text-xl text-gray-700 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl text-gray-700 dark:text-slate-300 max-w-3xl mx-auto leading-relaxed">
               Films and sports personalities that inspire me, organized by tiers of excellence.
             </p>
           </div>
@@ -421,8 +429,8 @@ export default function FavoritesPage() {
               onClick={() => setActiveTab('films')}
               className={`py-3 px-6 font-medium transition-colors ${
                 activeTab === 'films'
-                  ? 'bg-black text-white'
-                  : 'border border-black text-black hover:bg-black hover:text-white'
+                  ? 'bg-black dark:bg-white text-white dark:text-black'
+                  : 'border border-black dark:border-white text-black dark:text-white hover:bg-black dark:hover:bg-white hover:text-white dark:hover:text-black'
               }`}
             >
               Films
@@ -431,8 +439,8 @@ export default function FavoritesPage() {
               onClick={() => setActiveTab('sports')}
               className={`py-3 px-6 font-medium transition-colors ${
                 activeTab === 'sports'
-                  ? 'bg-black text-white'
-                  : 'border border-black text-black hover:bg-black hover:text-white'
+                  ? 'bg-black dark:bg-white text-white dark:text-black'
+                  : 'border border-black dark:border-white text-black dark:text-white hover:bg-black dark:hover:bg-white hover:text-white dark:hover:text-black'
               }`}
             >
               Sports
@@ -445,7 +453,7 @@ export default function FavoritesPage() {
           <div className="relative">
             {/* Sidebar */}
             <div className="fixed left-4 top-1/2 transform -translate-y-1/2 z-10">
-              <div className="bg-white/90 backdrop-blur-sm border border-gray-200 p-1 rounded-full shadow-lg">
+              <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm border border-gray-200 dark:border-slate-700 p-1 rounded-full shadow-lg">
                 <div className="flex flex-col space-y-0">
                   {Object.keys(filmTiers).map((tier) => (
                     <button
@@ -454,7 +462,7 @@ export default function FavoritesPage() {
                       className={`w-10 h-10 text-center rounded-full text-sm font-bold transition-all duration-200 ${
                         selectedTier === tier
                           ? 'bg-black text-white shadow-md scale-110'
-                          : 'hover:bg-gray-100 text-gray-700 hover:scale-105'
+                          : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-slate-300 hover:scale-105'
                       }`}
                       title={tier}
                     >
@@ -468,15 +476,15 @@ export default function FavoritesPage() {
             {/* Main Content */}
             <div className="flex-1">
               {selectedTier && filmTiers[selectedTier] && (
-                <div className="bg-white border border-gray-200 overflow-hidden">
+                <div className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 overflow-hidden">
                   <div className={`${getTierColor(selectedTier)} px-6 py-4`}>
                     <h2 className={`text-2xl font-bold ${getTierTextColor(selectedTier)} tracking-wide`}>{selectedTier}</h2>
                   </div>
                   <div className="p-6">
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
                       {filmTiers[selectedTier].map((film, index) => (
-                        <div key={index} className="bg-white border border-gray-200 overflow-hidden hover:shadow-lg transition-all duration-300 hover:scale-105">
-                          <div className="aspect-[3/4] bg-gray-200 flex items-center justify-center">
+                        <div key={index} className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 overflow-hidden hover:shadow-lg transition-all duration-300 hover:scale-105">
+                          <div className="aspect-[3/4] bg-gray-200 dark:bg-slate-800 flex items-center justify-center">
                             <img
                               src={film.poster}
                               alt={`${film.title} poster`}
@@ -496,7 +504,7 @@ export default function FavoritesPage() {
                             />
                           </div>
                           <div className="p-3">
-                            <h3 className="font-semibold text-gray-900 mb-2 text-sm line-clamp-2" title={film.title}>{film.title}</h3>
+                            <h3 className="font-semibold text-gray-900 dark:text-slate-100 mb-2 text-sm line-clamp-2" title={film.title}>{film.title}</h3>
                             <div className="flex justify-between items-center text-xs text-gray-600">
                               <span className="text-xs">{film.year}</span>
                               <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs">
@@ -519,7 +527,7 @@ export default function FavoritesPage() {
           <div className="relative">
             {/* Sidebar */}
             <div className="fixed left-4 top-1/2 transform -translate-y-1/2 z-10">
-              <div className="bg-white/90 backdrop-blur-sm border border-gray-200 p-1 rounded-full shadow-lg">
+              <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm border border-gray-200 dark:border-slate-700 p-1 rounded-full shadow-lg">
                 <div className="flex flex-col space-y-0">
                   {Object.keys(athleteTiers).map((tier) => (
                     <button
@@ -528,7 +536,7 @@ export default function FavoritesPage() {
                       className={`w-10 h-10 text-center rounded-full text-sm font-bold transition-all duration-200 ${
                         selectedSportsTier === tier
                           ? 'bg-black text-white shadow-md scale-110'
-                          : 'hover:bg-gray-100 text-gray-700 hover:scale-105'
+                          : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-slate-300 hover:scale-105'
                       }`}
                       title={tier}
                     >
@@ -542,15 +550,15 @@ export default function FavoritesPage() {
             {/* Main Content */}
             <div className="flex-1">
               {selectedSportsTier && athleteTiers[selectedSportsTier] && (
-                <div className="bg-white border border-gray-200 overflow-hidden">
+                <div className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 overflow-hidden">
                   <div className={`${getTierColor(selectedSportsTier)} px-6 py-4`}>
                     <h2 className={`text-2xl font-bold ${getTierTextColor(selectedSportsTier)} tracking-wide`}>{selectedSportsTier}</h2>
                   </div>
                   <div className="p-6">
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
                       {athleteTiers[selectedSportsTier].map((athlete, index) => (
-                        <div key={index} className="bg-white border border-gray-200 overflow-hidden hover:shadow-lg transition-all duration-300 hover:scale-105">
-                          <div className="aspect-square bg-gray-200 flex items-center justify-center">
+                        <div key={index} className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 overflow-hidden hover:shadow-lg transition-all duration-300 hover:scale-105">
+                          <div className="aspect-square bg-gray-200 dark:bg-slate-800 flex items-center justify-center">
                             <img
                               src={athlete.photo}
                               alt={`${athlete.name} photo`}
@@ -570,7 +578,7 @@ export default function FavoritesPage() {
                             />
                           </div>
                           <div className="p-3">
-                            <h3 className="font-semibold text-gray-900 mb-2 text-sm line-clamp-1" title={athlete.name}>{athlete.name}</h3>
+                            <h3 className="font-semibold text-gray-900 dark:text-slate-100 mb-2 text-sm line-clamp-1" title={athlete.name}>{athlete.name}</h3>
                             <div className="space-y-2 text-xs text-gray-600">
                               <div className="flex justify-start">
                                 <span className={`px-2 py-1 rounded text-xs ${

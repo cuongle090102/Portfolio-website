@@ -5,6 +5,7 @@ import { ArrowTopRightOnSquareIcon, CodeBracketIcon, ArrowLeftIcon, ChevronLeftI
 import Link from 'next/link';
 import BlockRenderer from '@/components/BlockRenderer';
 import { apiClient } from '@/lib/api';
+import ThemeToggle from '@/components/ThemeToggle';
 
 // Adaptive Image Component
 interface AdaptiveImageProps {
@@ -40,7 +41,7 @@ function AdaptiveImage({ src, alt, className = '', maxHeight = '80vh', onError }
 
   if (hasError) {
     return (
-      <div className={`flex flex-col items-center justify-center min-h-[200px] text-gray-500 bg-gray-100 rounded-lg ${className}`}>
+      <div className={`flex flex-col items-center justify-center min-h-[200px] text-gray-500 bg-gray-100 dark:bg-slate-800 rounded-lg ${className}`}>
         <svg className="w-12 h-12 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
         </svg>
@@ -52,7 +53,7 @@ function AdaptiveImage({ src, alt, className = '', maxHeight = '80vh', onError }
   return (
     <div className="relative w-full">
       {isLoading && (
-        <div className="flex flex-col items-center justify-center min-h-[200px] bg-gray-100 rounded-lg">
+        <div className="flex flex-col items-center justify-center min-h-[200px] bg-gray-100 dark:bg-slate-800 rounded-lg">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-600 mb-2"></div>
           <span className="text-sm text-gray-600">Loading image...</span>
         </div>
@@ -60,7 +61,7 @@ function AdaptiveImage({ src, alt, className = '', maxHeight = '80vh', onError }
       <img
         src={src}
         alt={alt}
-        className={`w-full h-auto object-contain bg-gray-100 rounded-lg transition-all duration-500 ${isLoading ? 'hidden' : 'block'} ${className}`}
+        className={`w-full h-auto object-contain bg-gray-100 dark:bg-slate-800 rounded-lg transition-all duration-500 ${isLoading ? 'hidden' : 'block'} ${className}`}
         style={{ maxHeight }}
         onLoad={handleLoad}
         onError={handleError}
@@ -281,7 +282,7 @@ export default function ProjectsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#000305] flex items-center justify-center">
+      <div className="min-h-screen bg-[#000305] dark:bg-slate-950 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto"></div>
           <p className="mt-4 text-gray-600">Loading projects...</p>
@@ -291,17 +292,17 @@ export default function ProjectsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white text-black page-transition">
+    <div className="min-h-screen bg-white dark:bg-slate-950 text-black dark:text-white page-transition transition-colors duration-300">
       {/* Header Name */}
       <div className="absolute top-6 left-6 z-10">
-        <Link href="/" className="text-2xl font-bold text-gray-900 tracking-tight hover:text-gray-600 transition-colors">
+        <Link href="/" className="text-2xl font-bold text-gray-900 dark:text-slate-100 tracking-tight hover:text-gray-600 dark:hover:text-gray-400 transition-colors">
           CUONG LE
         </Link>
       </div>
 
       {/* About Link - Top Right */}
       <div className="absolute top-6 right-6 z-10">
-        <Link href="/about" className="text-gray-900 hover:text-gray-600 transition-colors text-sm font-medium">
+        <Link href="/about" className="text-gray-900 dark:text-slate-100 hover:text-gray-600 dark:hover:text-gray-400 transition-colors text-sm font-medium">
           ABOUT
         </Link>
       </div>
@@ -311,7 +312,7 @@ export default function ProjectsPage() {
         {projects.length === 0 ? (
           <div className="w-full flex items-center justify-center">
             <div className="text-center">
-              <div className="w-24 h-24 mx-auto bg-gray-100 rounded-lg flex items-center justify-center mb-6">
+              <div className="w-24 h-24 mx-auto bg-gray-100 dark:bg-slate-800 rounded-lg flex items-center justify-center mb-6">
                 <CodeBracketIcon className="h-12 w-12 text-gray-600" />
               </div>
               <h3 className="text-2xl font-bold text-gray-900 mb-4">No projects yet</h3>
@@ -330,7 +331,7 @@ export default function ProjectsPage() {
             <div className="w-1/4 flex flex-col pl-6">
               <div className="flex-1 flex items-center justify-center">
                 <div className="space-y-1">
-                  <h2 className="text-xs md:text-sm font-medium text-gray-600 mb-2">
+                  <h2 className="text-xs md:text-sm font-medium text-gray-600 dark:text-slate-400 mb-2">
                     Selected work ({projects.length})
                   </h2>
                 {projects.map((project, index) => (
@@ -342,13 +343,13 @@ export default function ProjectsPage() {
                   >
                     <div className="relative">
                       <h3 className={`text-xs md:text-sm font-medium transition-all duration-300 leading-tight ${
-                        previewProject?.id === project.id 
-                          ? 'text-gray-900' 
-                          : 'text-gray-600 hover:text-gray-900'
+                        previewProject?.id === project.id
+                          ? 'text-gray-900 dark:text-slate-100'
+                          : 'text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-gray-100'
                       }`}>
                         {project.title}
                       </h3>
-                      <div className={`h-px bg-gray-900 transition-all duration-300 ${
+                      <div className={`h-px bg-gray-900 dark:bg-slate-100 transition-all duration-300 ${
                         previewProject?.id === project.id 
                           ? 'w-full' 
                           : 'w-0'
@@ -363,7 +364,7 @@ export default function ProjectsPage() {
             {/* Section 2: Project Display */}
             <div className="w-1/2 flex flex-col items-center justify-center pt-20">
               <div
-                className={`relative w-full min-h-[300px] bg-gray-100 border border-gray-200 flex items-center justify-center rounded-lg overflow-hidden ${previewProject ? 'cursor-pointer group/preview' : ''}`}
+                className={`relative w-full min-h-[300px] bg-gray-100 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 flex items-center justify-center rounded-lg overflow-hidden ${previewProject ? 'cursor-pointer group/preview' : ''}`}
                 onClick={() => previewProject && setSelectedProject(previewProject)}
               >
                 {previewProject ? (
@@ -423,7 +424,7 @@ export default function ProjectsPage() {
               {/* Project Info */}
               {previewProject && (
                 <div className="mt-6 space-y-4 text-center max-w-3xl">
-                  <p className="text-gray-600 leading-relaxed text-sm">
+                  <p className="text-gray-600 dark:text-slate-400 leading-relaxed text-sm">
                     {previewProject.description}
                   </p>
                   
@@ -435,7 +436,7 @@ export default function ProjectsPage() {
                       ).map((tech, index) => (
                         <span
                           key={index}
-                          className="px-2 py-1 text-xs text-gray-600 border border-gray-300 rounded"
+                          className="px-2 py-1 text-xs text-gray-600 dark:text-slate-400 border border-gray-300 dark:border-slate-600 rounded"
                         >
                           {tech.trim()}
                         </span>
@@ -475,28 +476,28 @@ export default function ProjectsPage() {
             <div className="w-1/4 flex flex-col pr-6">
               <div className="flex-1 flex items-center justify-center">
                 <div className="flex flex-col space-y-6">
-                  <Link 
-                    href="/" 
-                    className="text-gray-900 text-sm md:text-base font-medium hover:text-gray-600 transition-colors duration-300"
+                  <Link
+                    href="/"
+                    className="text-gray-900 dark:text-slate-100 text-sm md:text-base font-medium hover:text-gray-600 dark:hover:text-gray-400 transition-colors duration-300"
                   >
                     Index
                   </Link>
-                <Link 
-                  href="/projects" 
-                  className="text-gray-900 text-sm md:text-base font-medium hover:text-gray-600 transition-colors duration-300 relative"
+                <Link
+                  href="/projects"
+                  className="text-gray-900 dark:text-slate-100 text-sm md:text-base font-medium hover:text-gray-600 dark:hover:text-gray-400 transition-colors duration-300 relative"
                 >
                   Work
-                  <div className="absolute bottom-0 left-0 w-full h-0.5 bg-gray-900"></div>
+                  <div className="absolute bottom-0 left-0 w-full h-0.5 bg-gray-900 dark:bg-slate-100"></div>
                 </Link>
                 <Link
                   href="/favorites"
-                  className="text-gray-900 text-sm md:text-base font-medium hover:text-gray-600 transition-colors duration-300"
+                  className="text-gray-900 dark:text-slate-100 text-sm md:text-base font-medium hover:text-gray-600 dark:hover:text-gray-400 transition-colors duration-300"
                 >
                   Favorites
                 </Link>
                 <Link
                   href="/admin"
-                  className="text-gray-900 text-sm md:text-base font-medium hover:text-gray-600 transition-colors duration-300"
+                  className="text-gray-900 dark:text-slate-100 text-sm md:text-base font-medium hover:text-gray-600 dark:hover:text-gray-400 transition-colors duration-300"
                 >
                   Admin
                 </Link>
@@ -507,6 +508,13 @@ export default function ProjectsPage() {
         )}
       </main>
 
+      {/* Theme Toggle — bottom left */}
+      <div className="fixed left-6 bottom-6 z-50">
+        <div className="bg-white/70 dark:bg-slate-900/70 backdrop-blur-md border border-gray-200/50 dark:border-slate-700/50 rounded-full p-1.5 shadow-sm hover:shadow-md transition-all duration-300">
+          <ThemeToggle />
+        </div>
+      </div>
+
       {/* Project Detail Modal */}
       {selectedProject && (
         <div 
@@ -514,17 +522,17 @@ export default function ProjectsPage() {
           onClick={() => setSelectedProject(null)}
         >
           <div 
-            className="relative top-4 md:top-20 mx-auto p-6 lg:p-8 border border-gray-300 w-full md:w-11/12 lg:w-5/6 xl:w-4/5 2xl:w-3/4 h-full md:h-auto shadow-2xl bg-white text-gray-900"
+            className="relative top-4 md:top-20 mx-auto p-6 lg:p-8 border border-gray-300 dark:border-slate-600 w-full md:w-11/12 lg:w-5/6 xl:w-4/5 2xl:w-3/4 h-full md:h-auto shadow-2xl bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="mt-3">
               <div className="flex justify-between items-start mb-6">
                 <div className="flex-1">
-                  <h1 className="text-xl md:text-3xl font-bold text-gray-900">{selectedProject.title}</h1>
+                  <h1 className="text-xl md:text-3xl font-bold text-gray-900 dark:text-slate-100">{selectedProject.title}</h1>
                 </div>
                 <button
                   onClick={() => setSelectedProject(null)}
-                  className="text-gray-600 hover:text-gray-900 text-2xl md:text-3xl font-light ml-4 transition-colors duration-300"
+                  className="text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-gray-100 text-2xl md:text-3xl font-light ml-4 transition-colors duration-300"
                 >
                   ×
                 </button>
@@ -538,7 +546,7 @@ export default function ProjectsPage() {
                       {(selectedProject as any).media.map((mediaItem: any, index: number) => (
                         <div key={index} className="w-full">
                           {mediaItem.type === 'video' ? (
-                            <div className="w-full bg-gray-100 rounded-lg overflow-hidden">
+                            <div className="w-full bg-gray-100 dark:bg-slate-800 rounded-lg overflow-hidden">
                               {mediaItem.url.includes('youtube.com') || mediaItem.url.includes('youtu.be') || mediaItem.url.includes('vimeo.com') ? (
                                 <iframe
                                   src={getEmbedUrl(mediaItem.url)}
@@ -666,7 +674,7 @@ export default function ProjectsPage() {
                   <div className="text-gray-600 italic">No content available</div>
                 )}
                 
-                <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 pt-6 border-t border-gray-200">
+                <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 pt-6 border-t border-gray-200 dark:border-slate-700">
                   {selectedProject.demo_url && (
                     <a
                       href={selectedProject.demo_url}

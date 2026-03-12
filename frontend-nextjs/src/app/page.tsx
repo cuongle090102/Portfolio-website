@@ -4,10 +4,12 @@ import Link from 'next/link'
 import { useAuth } from '@/contexts/AuthContext'
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { mockProjects } from '@/lib/mockData'
+import ThemeToggle from '@/components/ThemeToggle'
 
 export default function HomePage() {
   const { isAuthenticated, logout } = useAuth();
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [showAboutFloat, setShowAboutFloat] = useState(false);
   const [isVisible, setIsVisible] = useState({
     hero: false,
     work: false,
@@ -52,11 +54,12 @@ export default function HomePage() {
     // Set hero as visible immediately
     setIsVisible(prev => ({ ...prev, hero: true }));
 
-    // Scroll progress
+    // Scroll progress + floating about button
     const handleScroll = () => {
       const scrollTop = window.scrollY;
       const docHeight = document.documentElement.scrollHeight - window.innerHeight;
       setScrollProgress(docHeight > 0 ? (scrollTop / docHeight) * 100 : 0);
+      setShowAboutFloat(scrollTop > 120);
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
 
@@ -67,43 +70,67 @@ export default function HomePage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white text-black page-transition">
+    <div className="min-h-screen bg-white dark:bg-slate-950 text-black dark:text-white page-transition transition-colors duration-300">
       {/* Scroll Progress Bar */}
       <div className="scroll-progress" style={{ width: `${scrollProgress}%` }} />
 
+      {/* Floating About Tab — right edge */}
+      <Link
+        href="/about"
+        className={`fixed right-0 top-1/2 -translate-y-1/2 z-50 transition-all duration-500 ease-out
+          ${showAboutFloat ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0 pointer-events-none'}`}
+      >
+        <div className="flex items-center gap-2 bg-white/70 dark:bg-slate-900/70 backdrop-blur-md border border-r-0 border-gray-200/50 dark:border-slate-700/50 rounded-l-full pl-4 pr-3 py-2.5 shadow-sm
+          hover:bg-white/95 dark:hover:bg-gray-900/95 hover:shadow-md hover:pl-5 transition-all duration-300 group">
+          <span className="text-[10px] font-medium tracking-[0.2em] uppercase text-gray-500 dark:text-slate-400 group-hover:text-gray-900 dark:group-hover:text-white transition-colors duration-300">
+            About
+          </span>
+          <svg className="w-3 h-3 text-gray-400 dark:text-slate-500 group-hover:text-gray-900 dark:group-hover:text-white group-hover:translate-x-0.5 transition-all duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </div>
+      </Link>
+
+      {/* Theme Toggle — bottom left */}
+      <div className="fixed left-6 bottom-6 z-50">
+        <div className="bg-white/70 dark:bg-slate-900/70 backdrop-blur-md border border-gray-200/50 dark:border-slate-700/50 rounded-full p-1.5 shadow-sm hover:shadow-md transition-all duration-300">
+          <ThemeToggle />
+        </div>
+      </div>
+
       {/* Navigation */}
       <nav className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50">
-        <div className="bg-white/40 backdrop-blur-md border border-white/40 rounded-full px-6 py-3 shadow-lg">
+        <div className="bg-white/40 dark:bg-slate-900/60 backdrop-blur-md border border-white/40 dark:border-slate-700/40 rounded-full px-6 py-3 shadow-lg">
           <div className="flex items-center space-x-6">
-            <Link href="/" className="text-black hover:text-gray-600 transition-colors text-sm">
+            <Link href="/" className="text-black dark:text-white hover:text-gray-600 dark:hover:text-slate-300 transition-colors text-sm">
               Index
             </Link>
-            <div className="w-px h-4 bg-gray-300"></div>
-            <Link href="/projects" className="text-black hover:text-gray-600 transition-colors text-sm">
+            <div className="w-px h-4 bg-gray-300 dark:bg-slate-600"></div>
+            <Link href="/projects" className="text-black dark:text-white hover:text-gray-600 dark:hover:text-slate-300 transition-colors text-sm">
               Work
             </Link>
-            <div className="w-px h-4 bg-gray-300"></div>
-            <Link href="/favorites" className="text-black hover:text-gray-600 transition-colors text-sm">
+            <div className="w-px h-4 bg-gray-300 dark:bg-slate-600"></div>
+            <Link href="/favorites" className="text-black dark:text-white hover:text-gray-600 dark:hover:text-slate-300 transition-colors text-sm">
               Favorites
             </Link>
             {isAuthenticated ? (
               <>
-                <div className="w-px h-4 bg-gray-300"></div>
-                <Link href="/admin" className="text-black hover:text-gray-600 transition-colors text-sm">
+                <div className="w-px h-4 bg-gray-300 dark:bg-slate-600"></div>
+                <Link href="/admin" className="text-black dark:text-white hover:text-gray-600 dark:hover:text-slate-300 transition-colors text-sm">
                   Admin
                 </Link>
-                <div className="w-px h-4 bg-gray-300"></div>
+                <div className="w-px h-4 bg-gray-300 dark:bg-slate-600"></div>
                 <button
                   onClick={logout}
-                  className="text-black hover:text-red-600 transition-colors text-sm"
+                  className="text-black dark:text-white hover:text-red-600 transition-colors text-sm"
                 >
                   Logout
                 </button>
               </>
             ) : (
               <>
-                <div className="w-px h-4 bg-gray-300"></div>
-                <Link href="/admin" className="text-black hover:text-gray-600 transition-colors text-sm">
+                <div className="w-px h-4 bg-gray-300 dark:bg-slate-600"></div>
+                <Link href="/admin" className="text-black dark:text-white hover:text-gray-600 dark:hover:text-slate-300 transition-colors text-sm">
                   Admin
                 </Link>
               </>
@@ -114,19 +141,19 @@ export default function HomePage() {
 
       {/* Hero Section */}
       <section
-        className="min-h-screen bg-white relative overflow-hidden"
+        className="min-h-screen bg-white dark:bg-slate-950 relative overflow-hidden transition-colors duration-300"
         data-section="hero"
       >
         {/* Header Name */}
         <div className="absolute top-6 left-6 z-10">
-          <Link href="/" className="text-2xl font-bold text-gray-900 tracking-tight hover:text-gray-600 transition-colors">
+          <Link href="/" className="text-2xl font-bold text-gray-900 dark:text-slate-100 tracking-tight hover:text-gray-600 dark:hover:text-slate-400 transition-colors">
             CUONG LE
           </Link>
         </div>
 
         {/* About Link - Top Right */}
         <div className="absolute top-6 right-6 z-10">
-          <Link href="/about" className="text-gray-900 hover:text-gray-600 transition-colors text-sm font-medium">
+          <Link href="/about" className="text-gray-900 dark:text-slate-100 hover:text-gray-600 dark:hover:text-slate-400 transition-colors text-sm font-medium">
             ABOUT
           </Link>
         </div>
@@ -148,7 +175,7 @@ export default function HomePage() {
         <div className="relative mt-[calc(4rem+65vh)]">
           <div className="max-w-5xl mx-auto px-6 lg:px-8 py-16">
             <div className={`${isVisible.hero ? '' : 'opacity-0'}`}>
-              <p className="text-xl lg:text-2xl text-gray-600 leading-relaxed text-center mx-auto max-w-3xl word-reveal">
+              <p className="text-xl lg:text-2xl text-gray-600 dark:text-slate-400 leading-relaxed text-center mx-auto max-w-3xl word-reveal">
                 {isVisible.hero && 'I believe in data science rooted in clear thinking, built on systems that adapt and challenge conventional approaches.'.split(' ').map((word, i) => (
                   <span key={i} style={{ animationDelay: `${0.3 + i * 0.05}s` }}>
                     {word}
@@ -158,10 +185,10 @@ export default function HomePage() {
             </div>
           </div>
         </div>
-        
+
       </section>
       {/* Selected Work Preview */}
-      <section className="py-32 bg-gray-900" data-section="work">
+      <section className="py-32 bg-gray-900 dark:bg-black transition-colors duration-300" data-section="work">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className={`mb-20 transition-all duration-1000 ${isVisible.work ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
             <h2 className="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight">
@@ -241,7 +268,7 @@ export default function HomePage() {
 
               {/* Crossy Dummy Cat */}
               {crossyProject && crossyVideo && (
-                <div className={`transition-all duration-1000 delay-400 ${isVisible.work ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+                <div className={`transition-all duration-1000 delay-500 ${isVisible.work ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
                   <div className="group relative rounded-2xl overflow-hidden">
                     <div className="aspect-video bg-black">
                       <iframe
@@ -264,7 +291,7 @@ export default function HomePage() {
           </div>
 
           {/* View All */}
-          <div className={`text-center mt-20 transition-all duration-1000 delay-600 ${isVisible.work ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+          <div className={`text-center mt-20 transition-all duration-1000 delay-700 ${isVisible.work ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
             <Link href="/projects" className="inline-flex items-center bg-white text-black px-8 py-4 font-medium rounded-full hover:bg-gray-200 transition-all duration-300 hover:scale-105">
               View All Projects
               <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -276,95 +303,95 @@ export default function HomePage() {
       </section>
 
       {/* Approach Section */}
-      <section className="py-32 bg-white" data-section="approach">
+      <section className="py-32 bg-white dark:bg-slate-950 transition-colors duration-300" data-section="approach">
         <div className="max-w-4xl mx-auto px-6 lg:px-8">
-          <div 
+          <div
             className={`text-center mb-20 transition-all duration-1000 ${isVisible.approach ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
           >
-            <h2 className="text-5xl font-bold text-black mb-8 leading-tight">
+            <h2 className="text-5xl font-bold text-black dark:text-white mb-8 leading-tight">
               My Approach
             </h2>
-            <p className="text-xl text-gray-700 leading-relaxed">
-              Combining technical precision with creative problem-solving to deliver 
+            <p className="text-xl text-gray-700 dark:text-slate-300 leading-relaxed">
+              Combining technical precision with creative problem-solving to deliver
               data solutions that drive measurable business impact.
             </p>
           </div>
-          
+
           <div className="space-y-16">
-            <div 
-              className={`border-l-2 border-gray-200 pl-8 hover:border-black transition-colors duration-300 transition-all duration-1000 delay-200 ${isVisible.approach ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+            <div
+              className={`border-l-2 border-gray-200 dark:border-slate-700 pl-8 hover:border-black dark:hover:border-white transition-all duration-1000 delay-200 ${isVisible.approach ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
             >
-              <h3 className="text-2xl font-bold text-black mb-4">01. Discovery & Strategy</h3>
-              <p className="text-gray-700 leading-relaxed mb-4">
-                Every project begins with deep understanding of business objectives and data landscape. 
+              <h3 className="text-2xl font-bold text-black dark:text-white mb-4">01. Discovery & Strategy</h3>
+              <p className="text-gray-700 dark:text-slate-300 leading-relaxed mb-4">
+                Every project begins with deep understanding of business objectives and data landscape.
                 I work closely with stakeholders to identify opportunities and define success metrics.
               </p>
-              <p className="text-sm text-gray-600 uppercase tracking-wider">Research • Planning • Stakeholder Alignment</p>
+              <p className="text-sm text-gray-600 dark:text-slate-500 uppercase tracking-wider">Research • Planning • Stakeholder Alignment</p>
             </div>
-            
-            <div 
-              className={`border-l-2 border-gray-200 pl-8 hover:border-black transition-colors duration-300 transition-all duration-1000 delay-400 ${isVisible.approach ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+
+            <div
+              className={`border-l-2 border-gray-200 dark:border-slate-700 pl-8 hover:border-black dark:hover:border-white transition-all duration-1000 delay-500 ${isVisible.approach ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
             >
-              <h3 className="text-2xl font-bold text-black mb-4">02. Architecture & Design</h3>
-              <p className="text-gray-700 leading-relaxed mb-4">
-                Designing scalable, maintainable systems that grow with your business. 
+              <h3 className="text-2xl font-bold text-black dark:text-white mb-4">02. Architecture & Design</h3>
+              <p className="text-gray-700 dark:text-slate-300 leading-relaxed mb-4">
+                Designing scalable, maintainable systems that grow with your business.
                 Focus on clean code, robust pipelines, and production-ready solutions.
               </p>
-              <p className="text-sm text-gray-600 uppercase tracking-wider">System Design • Data Modeling • Infrastructure</p>
+              <p className="text-sm text-gray-600 dark:text-slate-500 uppercase tracking-wider">System Design • Data Modeling • Infrastructure</p>
             </div>
-            
-            <div 
-              className={`border-l-2 border-gray-200 pl-8 hover:border-black transition-colors duration-300 transition-all duration-1000 delay-600 ${isVisible.approach ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+
+            <div
+              className={`border-l-2 border-gray-200 dark:border-slate-700 pl-8 hover:border-black dark:hover:border-white transition-all duration-1000 delay-700 ${isVisible.approach ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
             >
-              <h3 className="text-2xl font-bold text-black mb-4">03. Implementation & Testing</h3>
-              <p className="text-gray-700 leading-relaxed mb-4">
-                Rigorous development process with continuous testing, validation, and optimization. 
+              <h3 className="text-2xl font-bold text-black dark:text-white mb-4">03. Implementation & Testing</h3>
+              <p className="text-gray-700 dark:text-slate-300 leading-relaxed mb-4">
+                Rigorous development process with continuous testing, validation, and optimization.
                 Ensuring models perform reliably in production environments.
               </p>
-              <p className="text-sm text-gray-600 uppercase tracking-wider">Development • Testing • Optimization</p>
+              <p className="text-sm text-gray-600 dark:text-slate-500 uppercase tracking-wider">Development • Testing • Optimization</p>
             </div>
-            
-            <div 
-              className={`border-l-2 border-gray-200 pl-8 hover:border-black transition-colors duration-300 transition-all duration-1000 delay-800 ${isVisible.approach ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+
+            <div
+              className={`border-l-2 border-gray-200 dark:border-slate-700 pl-8 hover:border-black dark:hover:border-white transition-all duration-1000 delay-1000 ${isVisible.approach ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
             >
-              <h3 className="text-2xl font-bold text-black mb-4">04. Deployment & Monitoring</h3>
-              <p className="text-gray-700 leading-relaxed mb-4">
-                Seamless deployment with comprehensive monitoring and alerting. 
+              <h3 className="text-2xl font-bold text-black dark:text-white mb-4">04. Deployment & Monitoring</h3>
+              <p className="text-gray-700 dark:text-slate-300 leading-relaxed mb-4">
+                Seamless deployment with comprehensive monitoring and alerting.
                 Continuous improvement based on real-world performance and feedback.
               </p>
-              <p className="text-sm text-gray-600 uppercase tracking-wider">Deployment • Monitoring • Maintenance</p>
+              <p className="text-sm text-gray-600 dark:text-slate-500 uppercase tracking-wider">Deployment • Monitoring • Maintenance</p>
             </div>
           </div>
         </div>
       </section>
 
       {/* Contact Section */}
-      <section className="py-32 bg-gray-50" data-section="contact">
+      <section className="py-32 bg-gray-50 dark:bg-slate-900 transition-colors duration-300" data-section="contact">
         <div className="max-w-4xl mx-auto px-6 lg:px-8 text-center">
-          <h2 
-            className={`text-5xl font-bold text-black mb-8 leading-tight transition-all duration-1000 ${isVisible.contact ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+          <h2
+            className={`text-5xl font-bold text-black dark:text-white mb-8 leading-tight transition-all duration-1000 ${isVisible.contact ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
           >
             Let's Build Something
             <span className="block">Extraordinary</span>
           </h2>
-          <p 
-            className={`text-xl text-gray-700 mb-16 leading-relaxed max-w-3xl mx-auto transition-all duration-1000 delay-200 ${isVisible.contact ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+          <p
+            className={`text-xl text-gray-700 dark:text-slate-300 mb-16 leading-relaxed max-w-3xl mx-auto transition-all duration-1000 delay-200 ${isVisible.contact ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
           >
-            Ready to transform your data into a competitive advantage? 
+            Ready to transform your data into a competitive advantage?
             Let's discuss how we can unlock the potential in your business.
           </p>
-          <div 
-            className={`flex flex-col sm:flex-row gap-6 justify-center transition-all duration-1000 delay-400 ${isVisible.contact ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+          <div
+            className={`flex flex-col sm:flex-row gap-6 justify-center transition-all duration-1000 delay-500 ${isVisible.contact ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
           >
             <Link
               href="/projects"
-              className="bg-black text-white px-10 py-4 font-medium hover:bg-gray-900 transition-all duration-300 hover:scale-105"
+              className="bg-black dark:bg-white text-white dark:text-black px-10 py-4 font-medium hover:bg-gray-900 dark:hover:bg-slate-200 transition-all duration-300 hover:scale-105"
             >
               View All Projects
             </Link>
             <Link
               href="/favorites"
-              className="border border-black text-black px-10 py-4 font-medium hover:bg-black hover:text-white transition-all duration-300 hover:scale-105"
+              className="border border-black dark:border-white text-black dark:text-white px-10 py-4 font-medium hover:bg-black dark:hover:bg-white hover:text-white dark:hover:text-black transition-all duration-300 hover:scale-105"
             >
               Explore Favorites
             </Link>
@@ -373,29 +400,25 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-white border-t border-gray-200">
+      <footer className="bg-white dark:bg-slate-950 border-t border-gray-200 dark:border-slate-800 transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-6 lg:px-8 py-16">
           <div className="text-center">
-            <h3 className="text-black font-bold text-xl mb-6 tracking-tight">CUONG LE</h3>
-            <p className="text-gray-600 mb-12">Crafting intelligent solutions from complex data</p>
+            <h3 className="text-black dark:text-white font-bold text-xl mb-6 tracking-tight">CUONG LE</h3>
+            <p className="text-gray-600 dark:text-slate-400 mb-12">Crafting intelligent solutions from complex data</p>
             <div className="flex justify-center gap-8">
-              <a href="mailto:cle6565@gmail.com" className="text-gray-600 hover:text-black transition-colors p-2 rounded-full hover:bg-gray-100" title="Email">
+              <a href="mailto:cle6565@gmail.com" className="text-gray-600 dark:text-slate-400 hover:text-black dark:hover:text-white transition-colors p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800" title="Email">
                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-.904.732-1.636 1.636-1.636h3.819l6.545 4.91 6.545-4.91h3.819A1.636 1.636 0 0 1 24 5.457z"/>
                 </svg>
               </a>
-              <a href="https://www.instagram.com/cle9.1" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-black transition-colors p-2 rounded-full hover:bg-gray-100" title="Instagram">
+              <a href="https://www.instagram.com/cle9.1" target="_blank" rel="noopener noreferrer" className="text-gray-600 dark:text-slate-400 hover:text-black dark:hover:text-white transition-colors p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800" title="Instagram">
                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
                 </svg>
               </a>
-              <a href="https://linkedin.com/in/your-username" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-black transition-colors p-2 rounded-full hover:bg-gray-100" title="LinkedIn">
-                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                </svg>
-              </a>
+              {/* TODO: Replace with actual LinkedIn URL */}
             </div>
-            <div className="mt-12 pt-8 border-t border-gray-200">
+            <div className="mt-12 pt-8 border-t border-gray-200 dark:border-slate-800">
               <p className="text-gray-500 text-sm">
                 © 2025 CUONG LE. Building the future with data.
               </p>
