@@ -52,9 +52,16 @@ export default function BlockRenderer({ blocks }: BlockRendererProps) {
           case 'text':
             return (
               <div key={block.id} className="prose prose-gray max-w-none">
-                <p className="text-gray-700 leading-relaxed whitespace-pre-line">
-                  {block.content}
-                </p>
+                <p
+                  className="text-gray-700 leading-relaxed whitespace-pre-line"
+                  dangerouslySetInnerHTML={{
+                    __html: block.content
+                      .replace(/&/g, '&amp;')
+                      .replace(/</g, '&lt;')
+                      .replace(/>/g, '&gt;')
+                      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+                  }}
+                />
               </div>
             );
           

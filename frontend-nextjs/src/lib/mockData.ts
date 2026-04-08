@@ -100,43 +100,88 @@ export const mockProjects = [
     description: "A simulated paper trading system for the Vietnamese stock market built on microservices architecture, featuring real-time data pipelines, adaptive trading strategies, and comprehensive Grafana monitoring dashboards",
     blocks: [
       {
-        content: "Finstock is a financial data engineering platform designed to simulate paper trading on the Vietnamese stock market. Built on a microservices architecture using Docker, the system ingests real-time market data from 30 stock symbols, executes regime-adaptive trading strategies, and provides comprehensive monitoring through Grafana dashboards.",
-        id: "1",
+        content: "Most people build trading bots. I wanted to build the infrastructure behind one.",
+        id: "fs-001",
+        type: "text"
+      },
+      {
+        content: "Finstock is not a get-rich-quick algorithm. It is a data engineering platform — a full pipeline that ingests live Vietnamese stock market data, streams it through Kafka, stores it in TimescaleDB, runs adaptive trading strategies, backtests them nightly, and monitors everything through seven Grafana dashboards. All containerized. All orchestrated. All built to understand how production trading systems actually work under the hood.",
+        id: "fs-002",
         type: "text"
       },
       {
         content: "https://res.cloudinary.com/dt65gnluq/video/upload/v1772612032/recording_mkvpnh.mp4",
-        id: "1772608603001",
+        id: "fs-003",
         type: "video"
       },
       {
-        content: "System architecture",
-        id: "1772608603002",
+        content: "The problem",
+        id: "fs-004",
         type: "subheading"
       },
       {
-        content: "The platform follows a microservices design with distinct components orchestrated via Docker Compose and Apache Airflow:\n\n**Data Ingestion**: VnStock Producer fetches batch price data for 30 Vietnamese stock symbols and publishes to Kafka topics with Snappy compression across 3 partitions\n\n**Stream Processing & Storage**: TimescaleDB Consumer persists streaming data into PostgreSQL with the TimescaleDB extension, utilizing 5 hypertables and continuous aggregates for efficient time-series queries\n\n**Data Archival**: Parquet files are archived to MinIO (S3-compatible object storage) for long-term retention and batch analytics",
-        id: "1772608603003",
+        content: "The Vietnamese stock market is one of the fastest-growing in Southeast Asia, but its tooling ecosystem lags far behind. Most retail traders rely on broker-provided terminals with limited analytics. There is no Bloomberg equivalent for HOSE, HNX, or UPCOM. If you want to run systematic strategies on VN30 symbols — with proper backtesting, parameter optimization, and risk controls — you have to build the entire stack yourself.\n\nThat is exactly what Finstock does.",
+        id: "fs-005",
         type: "text"
       },
       {
-        content: "Trading strategies & optimization",
-        id: "1772608603004",
+        content: "How the data flows",
+        id: "fs-006",
         type: "subheading"
       },
       {
-        content: "The trading engine implements four regime-specific strategies with adaptive switching:\n\n**MA Crossover**: Moving average crossover for trending markets\n**Breakout**: Price breakout detection for volatile conditions\n**Mean Reversion**: Statistical mean reversion for range-bound markets\n**Momentum**: Momentum-based signals for strong directional moves\n\nThe system includes backtesting and optimization frameworks using Bayesian, Grid, and Genetic algorithms — all compliant with Vietnamese market rules including commissions, taxes, and price limits. Trading operates during market hours (9:00–15:00 Vietnam time, UTC+7).",
-        id: "1772608603005",
+        content: "The architecture is a classic streaming pipeline, but every piece is tuned for the Vietnamese market.\n\nA producer service polls the VnStock API every 60 seconds during market hours (9:00 to 15:00 Vietnam time), fetching OHLCV data for 30 VN30 symbols. It publishes to Kafka with Snappy compression across 3 partitions — enough parallelism for the data volume without overcomplicating consumer group management.\n\nA consumer service reads from Kafka and writes to TimescaleDB — PostgreSQL with the TimescaleDB extension. The schema uses 5 hypertables with continuous aggregates, which means common queries like \"give me 15-minute candles for FPT over the last 60 days\" resolve in milliseconds instead of scanning raw tick data.\n\nFor long-term storage, an Airflow DAG archives older data to MinIO in Parquet format on the first of every month. MinIO is S3-compatible, so the archive layer works identically whether you are running locally or migrating to AWS later.",
+        id: "fs-007",
         type: "text"
       },
       {
-        content: "Orchestration & monitoring",
-        id: "1772608603006",
+        content: "The trading engine",
+        id: "fs-008",
         type: "subheading"
       },
       {
-        content: "Three production Airflow DAGs automate the core workflows:\n\n- **Backtesting DAG**: Runs strategy backtests against historical data\n- **P&L Reporting DAG**: Generates profit & loss reports for portfolio tracking\n- **Data Archival DAG**: Moves processed data to MinIO in Parquet format\n\nSeven Grafana dashboards provide real-time visibility into market data flow, trading performance, system health, and Kafka consumer metrics — enabling quick diagnosis and data-driven iteration on strategies.",
-        id: "1772608603007",
+        content: "This is the core of the system — and the part I spent the most time on.\n\nInstead of picking one strategy and hoping it works, Finstock detects the current market regime and switches strategies accordingly. The regime detector uses a weighted voting system: ADX for trend strength (50% weight), a volatility ratio comparing short-term to long-term variance (30%), and price action patterns like higher highs and lower lows (20%). Based on the consensus, the system selects one of four strategies:\n\n**MA Crossover** — For neutral or weakly trending markets. Uses SMA 10/30 crossovers with volume confirmation (1.2x average) and a 5-minute cooldown to avoid signal noise.\n\n**Breakout** — For volatile, directional markets. Detects consolidation (price range under 2% for 10 periods), then fires when price breaks resistance with 1.5x volume. Requires 3-candle confirmation to filter false breakouts.\n\n**Mean Reversion** — For range-bound conditions. Combines Bollinger Bands (20/2.0) with RSI (14) to catch oversold bounces and overbought reversals. Includes a squeeze detector for low-volatility setups.\n\n**Momentum** — For strong directional trends. Uses ADX (14) to confirm trend strength and MACD (12/26/9) for entry timing.\n\nThe adaptive strategy sits on top, managing transitions with a 10-minute delay to prevent whipsawing between regimes on noisy data.",
+        id: "fs-009",
+        type: "text"
+      },
+      {
+        content: "Backtesting and optimization",
+        id: "fs-010",
+        type: "subheading"
+      },
+      {
+        content: "Every night at 06:00 Vietnam time — three hours before market open — an Airflow DAG kicks off a full backtest cycle. It pulls the last 60 days of data from TimescaleDB, detects the prevailing market regime, runs each strategy through the backtester, and optimizes parameters using Bayesian optimization.\n\nThe Bayesian optimizer uses a Gaussian Process with an RBF kernel, choosing between Expected Improvement, Upper Confidence Bound, and Probability of Improvement as acquisition functions. It typically converges in under 50 evaluations — far more efficient than a brute-force grid search over the same parameter space. Grid search and genetic algorithms are also available as alternatives.\n\nAll backtests enforce Vietnamese market rules: 0.15% commission per trade, 0.10% securities tax on sells, 100-share lot sizes, and exchange-specific price limits (HOSE ±7%, HNX ±10%, UPCOM ±15%). Optimized parameters are published back to Kafka, where the live paper trading service picks them up automatically — no manual intervention, no redeployment.",
+        id: "fs-011",
+        type: "text"
+      },
+      {
+        content: "Paper trading with real constraints",
+        id: "fs-012",
+        type: "subheading"
+      },
+      {
+        content: "The paper trading service simulates execution against real market data. It starts with 1 billion VND in virtual capital and enforces the same constraints a real Vietnamese brokerage would: minimum lot sizes, commission tiers (0.10% for VN30 blue chips, 0.15% for standard stocks), securities tax, and trading hour restrictions.\n\nPositions are tracked with FIFO cost basis. The broker validates every order against buying power, position concentration limits (10% max per symbol), and daily order limits before execution. Every trade is recorded to TimescaleDB, and a daily P&L report DAG runs at 15:30 — right after market close — to generate performance summaries.",
+        id: "fs-013",
+        type: "text"
+      },
+      {
+        content: "Monitoring everything",
+        id: "fs-014",
+        type: "subheading"
+      },
+      {
+        content: "Seven Grafana dashboards provide full visibility into the system:\n\n**Trading Terminal** — Live signals, positions, and P&L\n**Market Overview** — VN30 price movements and volume\n**Pipeline Health** — Kafka lag, consumer throughput, producer errors\n**Data Quality** — Missing symbols, stale data, OHLC consistency checks\n**Portfolio P&L** — Cumulative returns, drawdown, Sharpe ratio\n**Strategy Performance** — Win rate, profit factor, and regime distribution per strategy\n**Trade Analytics** — Entry/exit timing, holding periods, and slippage analysis\n\nThe dashboards connect directly to TimescaleDB and Kafka JMX metrics. When something breaks — a consumer falls behind, a strategy generates abnormal signal volume, or the VnStock API starts returning errors — it shows up in Grafana before it hits the trading engine.",
+        id: "fs-015",
+        type: "text"
+      },
+      {
+        content: "What I learned building this",
+        id: "fs-016",
+        type: "subheading"
+      },
+      {
+        content: "Building Finstock taught me that the hard part of a trading system is not the strategy — it is everything around it. Getting Kafka consumer groups to rebalance gracefully. Designing TimescaleDB hypertables that do not bloat after weeks of continuous ingestion. Writing circuit breakers that actually recover instead of just tripping. Making Airflow DAGs idempotent so a failed nightly backtest does not corrupt the next day's parameters.\n\nThe codebase is roughly 19,000 lines of Python across 72 files, with a test suite covering the critical path: circuit breakers, technical indicators, regime detection, and end-to-end integration. It runs as 12 Docker containers orchestrated by a single docker-compose.yml — Kafka, Zookeeper, TimescaleDB, MinIO, Airflow (webserver + scheduler), three application services, Grafana, and Kafka UI.\n\nIs it production-ready for real money? No — and that was never the goal. The value is in the engineering: building a system where every component is independently deployable, every data flow is observable, and every trading decision is reproducible from historical data.",
+        id: "fs-017",
         type: "text"
       }
     ],
