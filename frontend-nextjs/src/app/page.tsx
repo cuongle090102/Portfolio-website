@@ -1,15 +1,29 @@
 'use client'
 
 import Link from 'next/link'
-import { useAuth } from '@/contexts/AuthContext'
-import { useEffect, useState, useRef, useCallback } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { mockProjects } from '@/lib/mockData'
 import ThemeToggle from '@/components/ThemeToggle'
+import TopNav from '@/components/TopNav'
 
 export default function HomePage() {
-  const { isAuthenticated, logout } = useAuth();
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [scrollY, setScrollY] = useState(0);
   const [showAboutFloat, setShowAboutFloat] = useState(false);
+
+  // Cursor-tracked 3D tilt for project cards
+  const handleTiltMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const el = e.currentTarget;
+    const rect = el.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width - 0.5) * 2;  // -1..1
+    const y = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
+    el.style.setProperty('--tilt-x', `${y * -4}deg`);
+    el.style.setProperty('--tilt-y', `${x * 4}deg`);
+  }, []);
+  const handleTiltLeave = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    e.currentTarget.style.setProperty('--tilt-x', '0deg');
+    e.currentTarget.style.setProperty('--tilt-y', '0deg');
+  }, []);
   const [isVisible, setIsVisible] = useState({
     hero: false,
     work: false,
@@ -59,6 +73,7 @@ export default function HomePage() {
       const scrollTop = window.scrollY;
       const docHeight = document.documentElement.scrollHeight - window.innerHeight;
       setScrollProgress(docHeight > 0 ? (scrollTop / docHeight) * 100 : 0);
+      setScrollY(scrollTop);
       setShowAboutFloat(scrollTop > 120);
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -98,46 +113,7 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* Navigation */}
-      <nav className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50">
-        <div className="bg-white/40 dark:bg-slate-900/60 backdrop-blur-md border border-white/40 dark:border-slate-700/40 rounded-full px-6 py-3 shadow-lg">
-          <div className="flex items-center space-x-6">
-            <Link href="/" className="text-black dark:text-white hover:text-gray-600 dark:hover:text-slate-300 transition-colors text-sm">
-              Index
-            </Link>
-            <div className="w-px h-4 bg-gray-300 dark:bg-slate-600"></div>
-            <Link href="/projects" className="text-black dark:text-white hover:text-gray-600 dark:hover:text-slate-300 transition-colors text-sm">
-              Work
-            </Link>
-            <div className="w-px h-4 bg-gray-300 dark:bg-slate-600"></div>
-            <Link href="/favorites" className="text-black dark:text-white hover:text-gray-600 dark:hover:text-slate-300 transition-colors text-sm">
-              Favorites
-            </Link>
-            {isAuthenticated ? (
-              <>
-                <div className="w-px h-4 bg-gray-300 dark:bg-slate-600"></div>
-                <Link href="/admin" className="text-black dark:text-white hover:text-gray-600 dark:hover:text-slate-300 transition-colors text-sm">
-                  Admin
-                </Link>
-                <div className="w-px h-4 bg-gray-300 dark:bg-slate-600"></div>
-                <button
-                  onClick={logout}
-                  className="text-black dark:text-white hover:text-red-600 transition-colors text-sm"
-                >
-                  Logout
-                </button>
-              </>
-            ) : (
-              <>
-                <div className="w-px h-4 bg-gray-300 dark:bg-slate-600"></div>
-                <Link href="/admin" className="text-black dark:text-white hover:text-gray-600 dark:hover:text-slate-300 transition-colors text-sm">
-                  Admin
-                </Link>
-              </>
-            )}
-          </div>
-        </div>
-      </nav>
+      <TopNav current="index" />
 
       {/* Hero Section */}
       <section
@@ -153,19 +129,24 @@ export default function HomePage() {
 
         {/* About Link - Top Right */}
         <div className="absolute top-6 right-6 z-10">
-          <Link href="/about" className="text-gray-900 dark:text-slate-100 hover:text-gray-600 dark:hover:text-slate-400 transition-colors text-sm font-medium">
+          <Link href="/about" className="nav-link text-gray-900 dark:text-slate-100 hover:text-gray-600 dark:hover:text-slate-400 transition-colors text-sm font-medium">
             ABOUT
           </Link>
         </div>
 
-        {/* Full Width Hero Video */}
+        {/* Full Width Hero Video — parallax on scroll */}
         <div className="absolute top-16 left-0 right-0">
           <div className="w-full h-[65vh] bg-black overflow-hidden">
             <video
               autoPlay loop muted playsInline
               className="w-full h-full object-cover"
               onLoadedData={(e) => e.currentTarget.play()}
-              style={{ filter: 'grayscale(100%) contrast(1.1)' }}
+              style={{
+                filter: 'grayscale(100%) contrast(1.1)',
+                transform: `translate3d(0, ${scrollY * 0.3}px, 0) scale(1.12)`,
+                transformOrigin: 'center center',
+                willChange: 'transform',
+              }}
             >
               <source src="https://videos.pexels.com/video-files/3571264/3571264-uhd_2560_1440_30fps.mp4" type="video/mp4" />
             </video>
@@ -183,6 +164,16 @@ export default function HomePage() {
                 ))}
               </p>
             </div>
+
+            {/* Scroll cue */}
+            <div className="flex flex-col items-center mt-16 opacity-70">
+              <span className="text-[10px] font-medium tracking-[0.25em] uppercase text-gray-500 dark:text-slate-500 mb-2">
+                Scroll
+              </span>
+              <svg className="w-3.5 h-3.5 text-gray-500 dark:text-slate-500 scroll-cue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+              </svg>
+            </div>
           </div>
         </div>
 
@@ -191,7 +182,7 @@ export default function HomePage() {
       <section className="py-32 bg-gray-900 dark:bg-black transition-colors duration-300" data-section="work">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className={`mb-20 transition-all duration-1000 ${isVisible.work ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-            <h2 className="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight">
+            <h2 className="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight text-gradient-shift">
               Selected Work
             </h2>
             <p className="text-lg text-gray-400 max-w-2xl">
@@ -203,7 +194,11 @@ export default function HomePage() {
             {/* SPODEL — Featured (full-width) */}
             {spodelProject && spodelVideo && (
               <div className={`transition-all duration-1000 delay-200 ${isVisible.work ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-                <div className="group relative rounded-2xl overflow-hidden">
+                <div
+                  className="tilt-card group relative rounded-2xl overflow-hidden"
+                  onMouseMove={handleTiltMove}
+                  onMouseLeave={handleTiltLeave}
+                >
                   <div className="aspect-video bg-black">
                     <video
                       autoPlay loop muted playsInline
@@ -248,7 +243,11 @@ export default function HomePage() {
               {/* Finstock */}
               {finstockProject && finstockVideo && (
                 <div className={`transition-all duration-1000 delay-300 ${isVisible.work ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-                  <div className="group relative rounded-2xl overflow-hidden">
+                  <div
+                    className="tilt-card group relative rounded-2xl overflow-hidden"
+                    onMouseMove={handleTiltMove}
+                    onMouseLeave={handleTiltLeave}
+                  >
                     <div className="aspect-video bg-black">
                       <video
                         autoPlay loop muted playsInline
@@ -269,7 +268,11 @@ export default function HomePage() {
               {/* Crossy Dummy Cat */}
               {crossyProject && crossyVideo && (
                 <div className={`transition-all duration-1000 delay-500 ${isVisible.work ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-                  <div className="group relative rounded-2xl overflow-hidden">
+                  <div
+                    className="tilt-card group relative rounded-2xl overflow-hidden"
+                    onMouseMove={handleTiltMove}
+                    onMouseLeave={handleTiltLeave}
+                  >
                     <div className="aspect-video bg-black">
                       <iframe
                         src={`https://www.youtube.com/embed/${crossyVideo.content.split('v=')[1]?.split('&')[0]}?autoplay=1&mute=1&loop=1&playlist=${crossyVideo.content.split('v=')[1]?.split('&')[0]}&controls=0&showinfo=0&modestbranding=1`}
@@ -292,9 +295,9 @@ export default function HomePage() {
 
           {/* View All */}
           <div className={`text-center mt-20 transition-all duration-1000 delay-700 ${isVisible.work ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-            <Link href="/projects" className="inline-flex items-center bg-white text-black px-8 py-4 font-medium rounded-full hover:bg-gray-200 transition-all duration-300 hover:scale-105">
-              View All Projects
-              <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <Link href="/projects" className="btn-shine inline-flex items-center bg-white text-black px-8 py-4 font-medium rounded-full hover:bg-gray-200 transition-all duration-300 hover:scale-105 group/cta">
+              <span className="relative z-10">View All Projects</span>
+              <svg className="w-4 h-4 ml-2 relative z-10 group-hover/cta:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>
             </Link>
@@ -385,15 +388,15 @@ export default function HomePage() {
           >
             <Link
               href="/projects"
-              className="bg-black dark:bg-white text-white dark:text-black px-10 py-4 font-medium hover:bg-gray-900 dark:hover:bg-slate-200 transition-all duration-300 hover:scale-105"
+              className="btn-shine bg-black dark:bg-white text-white dark:text-black px-10 py-4 font-medium hover:bg-gray-900 dark:hover:bg-slate-200 transition-all duration-300 hover:scale-105"
             >
-              View All Projects
+              <span className="relative z-10">View All Projects</span>
             </Link>
             <Link
               href="/favorites"
-              className="border border-black dark:border-white text-black dark:text-white px-10 py-4 font-medium hover:bg-black dark:hover:bg-white hover:text-white dark:hover:text-black transition-all duration-300 hover:scale-105"
+              className="btn-shine border border-black dark:border-white text-black dark:text-white px-10 py-4 font-medium hover:bg-black dark:hover:bg-white hover:text-white dark:hover:text-black transition-all duration-300 hover:scale-105"
             >
-              Explore Favorites
+              <span className="relative z-10">Explore Favorites</span>
             </Link>
           </div>
         </div>

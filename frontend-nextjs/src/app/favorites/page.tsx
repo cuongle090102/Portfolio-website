@@ -5,6 +5,7 @@ import { useState, useRef, useEffect } from 'react'
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
 import { apiClient } from '@/lib/api'
 import ThemeToggle from '@/components/ThemeToggle'
+import TopNav from '@/components/TopNav'
 
 interface Film {
   title: string
@@ -372,33 +373,12 @@ export default function FavoritesPage() {
 
       {/* About Link - Top Right */}
       <div className="absolute top-6 right-6 z-10">
-        <Link href="/about" className="text-gray-900 dark:text-slate-100 hover:text-gray-600 dark:hover:text-gray-400 transition-colors text-sm font-medium">
+        <Link href="/about" className="nav-link text-gray-900 dark:text-slate-100 hover:text-gray-600 dark:hover:text-gray-400 transition-colors text-sm font-medium">
           ABOUT
         </Link>
       </div>
 
-      {/* Navigation */}
-      <nav className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50">
-        <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border border-gray-200 dark:border-slate-700 rounded-full px-6 py-3 shadow-lg">
-          <div className="flex items-center space-x-6">
-            <Link href="/" className="text-black dark:text-white hover:text-gray-600 dark:hover:text-gray-300 transition-colors text-sm">
-              Index
-            </Link>
-            <div className="w-px h-4 bg-gray-300 dark:bg-slate-600"></div>
-            <Link href="/projects" className="text-black dark:text-white hover:text-gray-600 dark:hover:text-gray-300 transition-colors text-sm">
-              Work
-            </Link>
-            <div className="w-px h-4 bg-gray-300 dark:bg-slate-600"></div>
-            <Link href="/favorites" className="text-black dark:text-white hover:text-gray-600 dark:hover:text-gray-300 transition-colors text-sm">
-              Favorites
-            </Link>
-            <div className="w-px h-4 bg-gray-300 dark:bg-slate-600"></div>
-            <Link href="/admin" className="text-black dark:text-white hover:text-gray-600 dark:hover:text-gray-300 transition-colors text-sm">
-              Admin
-            </Link>
-          </div>
-        </div>
-      </nav>
+      <TopNav current="favorites" />
 
       {/* Theme Toggle — bottom left */}
       <div className="fixed left-6 bottom-6 z-50">

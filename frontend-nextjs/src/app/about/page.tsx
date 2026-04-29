@@ -1,9 +1,9 @@
 'use client'
 
 import Link from 'next/link'
-import { useAuth } from '@/contexts/AuthContext'
 import { useEffect, useState, useCallback } from 'react'
 import ThemeToggle from '@/components/ThemeToggle'
+import TopNav from '@/components/TopNav'
 
 const fallbackIcon = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHZpZXdCb3g9IjAgMCA0OCA0OCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByeD0iOCIgZmlsbD0iIzk3QTNBRiIvPgo8dGV4dCB4PSIyNCIgeT0iMjgiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMiIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPjw/PC90ZXh0Pgo8L3N2Zz4K';
 
@@ -78,7 +78,6 @@ const certifications = [
 ];
 
 export default function AboutPage() {
-  const { isAuthenticated, logout } = useAuth();
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isVisible, setIsVisible] = useState({
     intro: false,
@@ -130,46 +129,7 @@ export default function AboutPage() {
       {/* Scroll Progress Bar */}
       <div className="scroll-progress" style={{ width: `${scrollProgress}%` }} />
 
-      {/* Navigation */}
-      <nav className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50">
-        <div className="bg-white/40 dark:bg-slate-900/60 backdrop-blur-md border border-white/40 dark:border-slate-700/40 rounded-full px-6 py-3 shadow-lg">
-          <div className="flex items-center space-x-6">
-            <Link href="/" className="text-black dark:text-white hover:text-gray-600 dark:hover:text-gray-300 transition-colors text-sm">
-              Index
-            </Link>
-            <div className="w-px h-4 bg-gray-300 dark:bg-slate-600"></div>
-            <Link href="/projects" className="text-black dark:text-white hover:text-gray-600 dark:hover:text-gray-300 transition-colors text-sm">
-              Work
-            </Link>
-            <div className="w-px h-4 bg-gray-300 dark:bg-slate-600"></div>
-            <Link href="/favorites" className="text-black dark:text-white hover:text-gray-600 dark:hover:text-gray-300 transition-colors text-sm">
-              Favorites
-            </Link>
-            {isAuthenticated ? (
-              <>
-                <div className="w-px h-4 bg-gray-300 dark:bg-slate-600"></div>
-                <Link href="/admin" className="text-black dark:text-white hover:text-gray-600 dark:hover:text-gray-300 transition-colors text-sm">
-                  Admin
-                </Link>
-                <div className="w-px h-4 bg-gray-300 dark:bg-slate-600"></div>
-                <button
-                  onClick={logout}
-                  className="text-black dark:text-white hover:text-red-600 transition-colors text-sm"
-                >
-                  Logout
-                </button>
-              </>
-            ) : (
-              <>
-                <div className="w-px h-4 bg-gray-300 dark:bg-slate-600"></div>
-                <Link href="/admin" className="text-black dark:text-white hover:text-gray-600 dark:hover:text-gray-300 transition-colors text-sm">
-                  Admin
-                </Link>
-              </>
-            )}
-          </div>
-        </div>
-      </nav>
+      <TopNav current="about" />
 
       {/* Theme Toggle — bottom left */}
       <div className="fixed left-6 bottom-6 z-50">
@@ -328,12 +288,12 @@ export default function AboutPage() {
                     {category.items.map((item) => (
                       <div
                         key={item.name}
-                        className="flex items-center gap-2.5 bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg px-4 py-2.5 hover:shadow-md hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-200"
+                        className="hover-float group flex items-center gap-2.5 bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg px-4 py-2.5 hover:shadow-md hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-200"
                       >
                         <img
                           src={item.logo}
                           alt={item.name}
-                          className="w-6 h-6 object-contain"
+                          className="w-6 h-6 object-contain transition-transform duration-300 group-hover:scale-110 group-hover:rotate-[-4deg]"
                           onError={(e) => {
                             (e.target as HTMLImageElement).src = fallbackIcon;
                           }}
@@ -361,15 +321,15 @@ export default function AboutPage() {
               <div className="flex flex-col sm:flex-row gap-4">
                 <a
                   href="mailto:cle6565@gmail.com"
-                  className="inline-flex items-center justify-center px-8 py-4 bg-black dark:bg-white text-white dark:text-black font-medium hover:bg-gray-900 dark:hover:bg-gray-200 transition-all duration-300 hover:scale-105"
+                  className="btn-shine inline-flex items-center justify-center px-8 py-4 bg-black dark:bg-white text-white dark:text-black font-medium hover:bg-gray-900 dark:hover:bg-gray-200 transition-all duration-300 hover:scale-105"
                 >
-                  Get in Touch
+                  <span className="relative z-10">Get in Touch</span>
                 </a>
                 <Link
                   href="/projects"
-                  className="inline-flex items-center justify-center px-8 py-4 border border-black dark:border-white text-black dark:text-white font-medium hover:bg-black dark:hover:bg-white hover:text-white dark:hover:text-black transition-all duration-300 hover:scale-105"
+                  className="btn-shine inline-flex items-center justify-center px-8 py-4 border border-black dark:border-white text-black dark:text-white font-medium hover:bg-black dark:hover:bg-white hover:text-white dark:hover:text-black transition-all duration-300 hover:scale-105"
                 >
-                  View My Work
+                  <span className="relative z-10">View My Work</span>
                 </Link>
               </div>
 

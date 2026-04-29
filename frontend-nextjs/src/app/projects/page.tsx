@@ -6,6 +6,7 @@ import Link from 'next/link';
 import BlockRenderer from '@/components/BlockRenderer';
 import { apiClient } from '@/lib/api';
 import ThemeToggle from '@/components/ThemeToggle';
+import TopNav from '@/components/TopNav';
 
 // Adaptive Image Component
 interface AdaptiveImageProps {
@@ -302,10 +303,12 @@ export default function ProjectsPage() {
 
       {/* About Link - Top Right */}
       <div className="absolute top-6 right-6 z-10">
-        <Link href="/about" className="text-gray-900 dark:text-slate-100 hover:text-gray-600 dark:hover:text-gray-400 transition-colors text-sm font-medium">
+        <Link href="/about" className="nav-link text-gray-900 dark:text-slate-100 hover:text-gray-600 dark:hover:text-gray-400 transition-colors text-sm font-medium">
           ABOUT
         </Link>
       </div>
+
+      <TopNav current="work" />
 
       {/* 3-Section Layout */}
       <main className="h-screen flex" data-section="projects">
