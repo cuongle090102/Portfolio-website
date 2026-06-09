@@ -160,7 +160,7 @@ export default function AboutPage() {
         <section className="max-w-7xl mx-auto px-6 lg:px-8 mb-12" data-section="intro">
           <div className={`grid lg:grid-cols-[1.05fr_0.95fr] gap-10 lg:gap-12 items-center transition-all duration-1000 ${isVisible.intro ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
             <div>
-              <h1 className="cinema-eyebrow mb-6">Analytics Engineer</h1>
+              <h1 className="cinema-eyebrow mb-6">Data Analytics Engineer</h1>
               <p className="cinema-title text-xl md:text-2xl font-medium text-gray-800 dark:text-slate-200 leading-relaxed max-w-2xl mb-8">
                 I build trusted data pipelines, reusable models, and analytics products that help teams act with confidence.
               </p>
