@@ -299,7 +299,10 @@ export default function ProjectsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-950 text-black dark:text-white page-transition cinema-page-transition transition-colors duration-300">
+    <div
+      className="min-h-screen bg-white dark:bg-slate-950 text-black dark:text-white page-transition cinema-page-transition transition-colors duration-300"
+      data-treasure-ready="work"
+    >
       {/* Header Name */}
       <div className="absolute top-6 left-6 z-10">
         <Link href="/" className="text-2xl font-bold text-gray-900 dark:text-slate-100 tracking-tight hover:text-gray-600 dark:hover:text-gray-400 transition-colors">

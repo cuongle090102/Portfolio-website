@@ -175,10 +175,11 @@ export default function HomePage() {
     const routeReady = new Promise<void>((resolve) => {
       const startedAt = performance.now();
       const checkRoute = () => {
-        if (
-          normalizePath(window.location.pathname) === destinationPath ||
-          performance.now() - startedAt > 5000
-        ) {
+        const routeCommitted = normalizePath(window.location.pathname) === destinationPath;
+        const destinationRendered = destination.key !== 'work' ||
+          document.querySelector('[data-treasure-ready="work"]');
+
+        if ((routeCommitted && destinationRendered) || performance.now() - startedAt > 5000) {
           resolve();
           return;
         }
