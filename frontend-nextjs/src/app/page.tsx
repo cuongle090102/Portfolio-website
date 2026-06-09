@@ -1,15 +1,35 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useState, useCallback } from 'react'
+import { useRouter } from 'next/navigation'
+import { useEffect, useState, useCallback, useRef } from 'react'
+import type { CSSProperties } from 'react'
 import { mockProjects } from '@/lib/mockData'
 import ThemeToggle from '@/components/ThemeToggle'
 import TopNav from '@/components/TopNav'
 
+const TREASURE_DESTINATIONS = [
+  { key: 'about', label: 'About', href: '/about' },
+  { key: 'work', label: 'Work', href: '/projects' },
+  { key: 'favorites', label: 'Favorites', href: '/favorites' },
+] as const;
+
+type TreasureDestination = (typeof TREASURE_DESTINATIONS)[number];
+
 export default function HomePage() {
-  const [scrollProgress, setScrollProgress] = useState(0);
-  const [scrollY, setScrollY] = useState(0);
+  const router = useRouter();
   const [showAboutFloat, setShowAboutFloat] = useState(false);
+  const [heroTreasure, setHeroTreasure] = useState<{
+    x: number;
+    y: number;
+    destination: TreasureDestination;
+  } | null>(null);
+  const [isTreasureFlying, setIsTreasureFlying] = useState(false);
+  const heroCinemaRef = useRef<HTMLDivElement>(null);
+  const scrollProgressRef = useRef<HTMLDivElement>(null);
+  const heroFrameRef = useRef<number | null>(null);
+  const heroPointerRef = useRef({ x: 0.5, y: 0.45 });
+  const treasureTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Cursor-tracked 3D tilt for project cards
   const handleTiltMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
@@ -24,6 +44,161 @@ export default function HomePage() {
     e.currentTarget.style.setProperty('--tilt-x', '0deg');
     e.currentTarget.style.setProperty('--tilt-y', '0deg');
   }, []);
+
+  const handleHeroMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    heroPointerRef.current = {
+      x: Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width)),
+      y: Math.min(1, Math.max(0, (e.clientY - rect.top) / rect.height)),
+    };
+
+    if (heroFrameRef.current !== null) return;
+
+    const element = e.currentTarget;
+    heroFrameRef.current = requestAnimationFrame(() => {
+      const { x, y } = heroPointerRef.current;
+      element.style.setProperty('--hero-x', `${x * element.clientWidth}px`);
+      element.style.setProperty('--hero-y', `${y * element.clientHeight}px`);
+      element.style.setProperty('--hero-pan-x', `${(x - 0.5) * -22}px`);
+      element.style.setProperty('--hero-pan-y', `${(y - 0.5) * -12}px`);
+      heroFrameRef.current = null;
+    });
+  }, []);
+
+  const beginTreasureSearch = useCallback(() => {
+    if (heroTreasure || treasureTimerRef.current) return;
+
+    treasureTimerRef.current = setTimeout(() => {
+      const destination = TREASURE_DESTINATIONS[
+        Math.floor(Math.random() * TREASURE_DESTINATIONS.length)
+      ];
+      setHeroTreasure({
+        x: 16 + Math.random() * 68,
+        y: 20 + Math.random() * 56,
+        destination,
+      });
+      treasureTimerRef.current = null;
+    }, 6000);
+  }, [heroTreasure]);
+
+  const pauseTreasureSearch = useCallback(() => {
+    if (!treasureTimerRef.current) return;
+    clearTimeout(treasureTimerRef.current);
+    treasureTimerRef.current = null;
+  }, []);
+
+  const flyTreasureToDestination = useCallback(async (event: React.MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault();
+    if (isTreasureFlying || !heroTreasure) return;
+
+    const source = event.currentTarget;
+    const { destination } = heroTreasure;
+    const target = document.querySelector<HTMLElement>(
+      `[data-treasure-target="${destination.key}"]`
+    );
+    if (!target || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      router.push(destination.href);
+      return;
+    }
+
+    setIsTreasureFlying(true);
+    document.documentElement.classList.add('treasure-navigation');
+    const sourceRect = source.getBoundingClientRect();
+    const targetRect = target.getBoundingClientRect();
+    const startX = sourceRect.left + sourceRect.width / 2;
+    const startY = sourceRect.top + sourceRect.height / 2;
+    const endX = targetRect.left + targetRect.width / 2;
+    const endY = targetRect.top + targetRect.height / 2;
+    const deltaX = endX - startX;
+    const deltaY = endY - startY;
+
+    const flight = source.cloneNode(true) as HTMLAnchorElement;
+    flight.removeAttribute('href');
+    flight.removeAttribute('style');
+    flight.className = 'hero-treasure-flight';
+    flight.setAttribute('aria-hidden', 'true');
+    Object.assign(flight.style, {
+      left: `${startX}px`,
+      top: `${startY}px`,
+      width: `${sourceRect.width}px`,
+      height: `${sourceRect.height}px`,
+    });
+    document.body.appendChild(flight);
+
+    const veil = document.createElement('div');
+    veil.className = 'treasure-route-veil';
+    veil.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(veil);
+
+    source.style.opacity = '0';
+    const flightAnimation = flight.animate([
+      {
+        opacity: 1,
+        transform: 'translate(-50%, -50%) translate3d(0, 0, 0) scale(1)',
+      },
+      {
+        opacity: 1,
+        transform: `translate(-50%, -50%) translate3d(${deltaX * 0.32}px, ${deltaY * 0.16 - 22}px, 0) scale(0.94)`,
+        offset: 0.34,
+      },
+      {
+        opacity: 0.92,
+        transform: `translate(-50%, -50%) translate3d(${deltaX * 0.72}px, ${deltaY * 0.58 - 14}px, 0) scale(0.7)`,
+        offset: 0.7,
+      },
+      {
+        opacity: 0,
+        transform: `translate(-50%, -50%) translate3d(${deltaX}px, ${deltaY}px, 0) scale(0.18)`,
+      },
+    ], {
+      duration: 430,
+      easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+      fill: 'forwards',
+    });
+
+    const targetAnimation = target.animate([
+      { transform: 'scale(1)', opacity: 1 },
+      { transform: 'scale(1)', opacity: 1, offset: 0.76 },
+      { transform: 'scale(1.06)', opacity: 0.78, offset: 0.88 },
+      { transform: 'scale(1)', opacity: 1 },
+    ], {
+      duration: 450,
+      easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+    });
+
+    const normalizePath = (path: string) => path.length > 1 ? path.replace(/\/+$/, '') : path;
+    const destinationPath = normalizePath(
+      new URL(destination.href, window.location.href).pathname
+    );
+    router.push(destination.href);
+
+    const routeReady = new Promise<void>((resolve) => {
+      const startedAt = performance.now();
+      const checkRoute = () => {
+        if (
+          normalizePath(window.location.pathname) === destinationPath ||
+          performance.now() - startedAt > 5000
+        ) {
+          resolve();
+          return;
+        }
+        requestAnimationFrame(checkRoute);
+      };
+      checkRoute();
+    });
+
+    await Promise.allSettled([
+      flightAnimation.finished,
+      targetAnimation.finished,
+      routeReady,
+    ]);
+
+    flight.remove();
+    veil.classList.add('is-leaving');
+    await new Promise(resolve => window.setTimeout(resolve, 120));
+    veil.remove();
+    document.documentElement.classList.remove('treasure-navigation');
+  }, [heroTreasure, isTreasureFlying, router]);
   const [isVisible, setIsVisible] = useState({
     hero: false,
     work: false,
@@ -40,6 +215,10 @@ export default function HomePage() {
 
   const spodelProject = mockProjects.find(project => project.title === "THESIS: SPODEL");
   const spodelVideo = spodelProject?.blocks?.find(block => block.type === "video");
+
+  useEffect(() => {
+    TREASURE_DESTINATIONS.forEach(({ href }) => router.prefetch(href));
+  }, [router]);
 
   useEffect(() => {
     const observerOptions = {
@@ -68,26 +247,40 @@ export default function HomePage() {
     // Set hero as visible immediately
     setIsVisible(prev => ({ ...prev, hero: true }));
 
-    // Scroll progress + floating about button
+    // Scroll progress, video parallax, and floating about button
+    let scrollFrame: number | null = null;
     const handleScroll = () => {
-      const scrollTop = window.scrollY;
-      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      setScrollProgress(docHeight > 0 ? (scrollTop / docHeight) * 100 : 0);
-      setScrollY(scrollTop);
-      setShowAboutFloat(scrollTop > 120);
+      if (scrollFrame !== null) return;
+
+      scrollFrame = requestAnimationFrame(() => {
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const progress = docHeight > 0 ? scrollTop / docHeight : 0;
+        scrollProgressRef.current?.style.setProperty('--scroll-progress', `${progress}`);
+        heroCinemaRef.current?.style.setProperty('--hero-scroll-y', `${scrollTop * 0.3}px`);
+        setShowAboutFloat(current => {
+          const shouldShow = scrollTop > 120;
+          return current === shouldShow ? current : shouldShow;
+        });
+        scrollFrame = null;
+      });
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
 
     return () => {
       observer.disconnect();
       window.removeEventListener('scroll', handleScroll);
+      if (scrollFrame !== null) cancelAnimationFrame(scrollFrame);
+      if (heroFrameRef.current !== null) cancelAnimationFrame(heroFrameRef.current);
+      if (treasureTimerRef.current) clearTimeout(treasureTimerRef.current);
     };
   }, []);
 
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-950 text-black dark:text-white page-transition transition-colors duration-300">
+    <div className="min-h-screen bg-white dark:bg-slate-950 text-black dark:text-white page-transition cinema-page-transition transition-colors duration-300">
       {/* Scroll Progress Bar */}
-      <div className="scroll-progress" style={{ width: `${scrollProgress}%` }} />
+      <div ref={scrollProgressRef} className="scroll-progress" />
 
       {/* Floating About Tab — right edge */}
       <Link
@@ -107,7 +300,7 @@ export default function HomePage() {
       </Link>
 
       {/* Theme Toggle — bottom left */}
-      <div className="fixed left-6 bottom-6 z-50">
+      <div className="fixed right-6 bottom-6 z-50">
         <div className="bg-white/70 dark:bg-slate-900/70 backdrop-blur-md border border-gray-200/50 dark:border-slate-700/50 rounded-full p-1.5 shadow-sm hover:shadow-md transition-all duration-300">
           <ThemeToggle />
         </div>
@@ -129,33 +322,72 @@ export default function HomePage() {
 
         {/* About Link - Top Right */}
         <div className="absolute top-6 right-6 z-10">
-          <Link href="/about" className="nav-link text-gray-900 dark:text-slate-100 hover:text-gray-600 dark:hover:text-slate-400 transition-colors text-sm font-medium">
+          <Link data-treasure-target="about" href="/about" className="nav-link text-gray-900 dark:text-slate-100 hover:text-gray-600 dark:hover:text-slate-400 transition-colors text-sm font-medium">
             ABOUT
           </Link>
         </div>
 
         {/* Full Width Hero Video — parallax on scroll */}
         <div className="absolute top-16 left-0 right-0">
-          <div className="w-full h-[65vh] bg-black overflow-hidden">
+          <div
+            ref={heroCinemaRef}
+            className="hero-cinema w-full h-[65vh] bg-black overflow-hidden"
+            onMouseEnter={beginTreasureSearch}
+            onMouseMove={(event) => {
+              beginTreasureSearch();
+              handleHeroMove(event);
+            }}
+            onMouseLeave={pauseTreasureSearch}
+          >
             <video
               autoPlay loop muted playsInline
-              className="w-full h-full object-cover"
+              className="hero-video-motion w-full h-full object-cover"
               onLoadedData={(e) => e.currentTarget.play()}
               style={{
                 filter: 'grayscale(100%) contrast(1.1)',
-                transform: `translate3d(0, ${scrollY * 0.3}px, 0) scale(1.12)`,
+                transform: 'translate3d(var(--hero-pan-x, 0px), calc(var(--hero-scroll-y, 0px) + var(--hero-pan-y, 0px)), 0) scale(1.16)',
                 transformOrigin: 'center center',
                 willChange: 'transform',
               }}
             >
               <source src="https://videos.pexels.com/video-files/3571264/3571264-uhd_2560_1440_30fps.mp4" type="video/mp4" />
             </video>
+            <div className="hero-spotlight" />
+            <div className="hero-orbit" />
+            {heroTreasure && (
+              <Link
+                href={heroTreasure.destination.href}
+                className="hero-treasure"
+                style={{
+                  '--treasure-x': `${heroTreasure.x}%`,
+                  '--treasure-y': `${heroTreasure.y}%`,
+                } as CSSProperties}
+                aria-label={`Discover ${heroTreasure.destination.label}`}
+                onClick={flyTreasureToDestination}
+              >
+                <span>{heroTreasure.destination.label}</span>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M5 12h14M13 6l6 6-6 6" />
+                </svg>
+              </Link>
+            )}
+            <div className="hero-depth" aria-hidden="true">
+              <span style={{ '--dot-index': 0 } as CSSProperties} />
+              <span style={{ '--dot-index': 1 } as CSSProperties} />
+              <span style={{ '--dot-index': 2 } as CSSProperties} />
+            </div>
+            <div className="absolute inset-x-6 bottom-6 z-10 hidden md:flex items-end justify-between text-white">
+              <div className="hero-drift text-[10px] font-semibold uppercase tracking-[0.34em]">
+                <div className="kinetic-label"><span style={{ '--label-index': 0 } as CSSProperties}>Data Enthusiast</span></div>
+              </div>
+              <div className="hero-line-drift h-px w-40 bg-white/60 motion-scale-in" />
+            </div>
           </div>
         </div>
 
         <div className="relative mt-[calc(4rem+65vh)]">
           <div className="max-w-5xl mx-auto px-6 lg:px-8 py-16">
-            <div className={`${isVisible.hero ? '' : 'opacity-0'}`}>
+            <div className={`hero-text-plate ${isVisible.hero ? '' : 'opacity-0'}`}>
               <p className="text-xl lg:text-2xl text-gray-600 dark:text-slate-400 leading-relaxed text-center mx-auto max-w-3xl word-reveal">
                 {isVisible.hero && 'I believe in data science rooted in clear thinking, built on systems that adapt and challenge conventional approaches.'.split(' ').map((word, i) => (
                   <span key={i} style={{ animationDelay: `${0.3 + i * 0.05}s` }}>
@@ -165,24 +397,15 @@ export default function HomePage() {
               </p>
             </div>
 
-            {/* Scroll cue */}
-            <div className="flex flex-col items-center mt-16 opacity-70">
-              <span className="text-[10px] font-medium tracking-[0.25em] uppercase text-gray-500 dark:text-slate-500 mb-2">
-                Scroll
-              </span>
-              <svg className="w-3.5 h-3.5 text-gray-500 dark:text-slate-500 scroll-cue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-              </svg>
-            </div>
           </div>
         </div>
 
       </section>
       {/* Selected Work Preview */}
-      <section className="py-32 bg-gray-900 dark:bg-black transition-colors duration-300" data-section="work">
+      <section id="selected-work" className={`minimal-scroll-section py-32 bg-gray-900 dark:bg-black transition-colors duration-300 scroll-mt-20 ${isVisible.work ? 'is-visible' : ''}`} data-section="work">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className={`mb-20 transition-all duration-1000 ${isVisible.work ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-            <h2 className="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight text-gradient-shift">
+          <div className="minimal-reveal mb-20">
+            <h2 className="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight">
               Selected Work
             </h2>
             <p className="text-lg text-gray-400 max-w-2xl">
@@ -193,9 +416,9 @@ export default function HomePage() {
           <div className="space-y-20">
             {/* SPODEL — Featured (full-width) */}
             {spodelProject && spodelVideo && (
-              <div className={`transition-all duration-1000 delay-200 ${isVisible.work ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+              <div className="minimal-reveal minimal-delay-1">
                 <div
-                  className="tilt-card group relative rounded-2xl overflow-hidden"
+                  className="tilt-card cinema-card group relative rounded-2xl overflow-hidden"
                   onMouseMove={handleTiltMove}
                   onMouseLeave={handleTiltLeave}
                 >
@@ -242,9 +465,9 @@ export default function HomePage() {
             <div className="grid md:grid-cols-2 gap-8">
               {/* Finstock */}
               {finstockProject && finstockVideo && (
-                <div className={`transition-all duration-1000 delay-300 ${isVisible.work ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+                <div className="minimal-reveal minimal-delay-2">
                   <div
-                    className="tilt-card group relative rounded-2xl overflow-hidden"
+                    className="tilt-card cinema-card group relative rounded-2xl overflow-hidden"
                     onMouseMove={handleTiltMove}
                     onMouseLeave={handleTiltLeave}
                   >
@@ -267,9 +490,9 @@ export default function HomePage() {
 
               {/* Crossy Dummy Cat */}
               {crossyProject && crossyVideo && (
-                <div className={`transition-all duration-1000 delay-500 ${isVisible.work ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+                <div className="minimal-reveal minimal-delay-3">
                   <div
-                    className="tilt-card group relative rounded-2xl overflow-hidden"
+                    className="tilt-card cinema-card group relative rounded-2xl overflow-hidden"
                     onMouseMove={handleTiltMove}
                     onMouseLeave={handleTiltLeave}
                   >
@@ -294,7 +517,7 @@ export default function HomePage() {
           </div>
 
           {/* View All */}
-          <div className={`text-center mt-20 transition-all duration-1000 delay-700 ${isVisible.work ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+          <div className="minimal-reveal minimal-delay-3 text-center mt-20">
             <Link href="/projects" className="btn-shine inline-flex items-center bg-white text-black px-8 py-4 font-medium rounded-full hover:bg-gray-200 transition-all duration-300 hover:scale-105 group/cta">
               <span className="relative z-10">View All Projects</span>
               <svg className="w-4 h-4 ml-2 relative z-10 group-hover/cta:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -306,7 +529,7 @@ export default function HomePage() {
       </section>
 
       {/* Approach Section */}
-      <section className="py-32 bg-white dark:bg-slate-950 transition-colors duration-300" data-section="approach">
+      <section className={`cinema-scroll-section py-32 bg-white dark:bg-slate-950 transition-colors duration-300 ${isVisible.approach ? 'is-visible' : ''}`} data-section="approach">
         <div className="max-w-4xl mx-auto px-6 lg:px-8">
           <div
             className={`text-center mb-20 transition-all duration-1000 ${isVisible.approach ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
@@ -369,7 +592,7 @@ export default function HomePage() {
       </section>
 
       {/* Contact Section */}
-      <section className="py-32 bg-gray-50 dark:bg-slate-900 transition-colors duration-300" data-section="contact">
+      <section className={`cinema-scroll-section py-32 bg-gray-50 dark:bg-slate-900 transition-colors duration-300 ${isVisible.contact ? 'is-visible' : ''}`} data-section="contact">
         <div className="max-w-4xl mx-auto px-6 lg:px-8 text-center">
           <h2
             className={`text-5xl font-bold text-black dark:text-white mb-8 leading-tight transition-all duration-1000 ${isVisible.contact ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
@@ -403,11 +626,15 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-white dark:bg-slate-950 border-t border-gray-200 dark:border-slate-800 transition-colors duration-300">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8 py-16">
+      <footer className="cinema-footer bg-white dark:bg-slate-950 border-t border-gray-200 dark:border-slate-800 transition-colors duration-300">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8 py-20">
           <div className="text-center">
-            <h3 className="text-black dark:text-white font-bold text-xl mb-6 tracking-tight">CUONG LE</h3>
-            <p className="text-gray-600 dark:text-slate-400 mb-12">Crafting intelligent solutions from complex data</p>
+            <div className="cinema-eyebrow justify-center mb-6">End Frame</div>
+            <h3 className="cinema-title text-black dark:text-white font-bold text-3xl md:text-4xl mb-5 tracking-tight">CUONG LE</h3>
+            <p className="text-gray-600 dark:text-slate-400 mb-10 max-w-xl mx-auto leading-relaxed">
+              Building thoughtful data systems, analytical products, and software that turns complexity into direction.
+            </p>
+            <div className="cinema-footer-line text-gray-900 dark:text-white mb-10" />
             <div className="flex justify-center gap-8">
               <a href="mailto:cle6565@gmail.com" className="text-gray-600 dark:text-slate-400 hover:text-black dark:hover:text-white transition-colors p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800" title="Email">
                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">

@@ -37,11 +37,11 @@ export default function TopNav({ current }: { current: Current }) {
   }, [hovered, activeIdx, isAuthenticated])
 
   return (
-    <nav className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50">
+    <nav className="fixed top-16 sm:top-6 left-1/2 -translate-x-1/2 z-50 w-[calc(100vw-1.5rem)] sm:w-auto">
       <div
         ref={containerRef}
         onMouseLeave={() => setHovered(null)}
-        className="relative bg-white/40 dark:bg-slate-900/60 backdrop-blur-md border border-white/40 dark:border-slate-700/40 rounded-full px-1.5 py-1.5 shadow-lg"
+        className="motion-fade-up relative mx-auto w-fit max-w-full overflow-x-auto bg-white/40 dark:bg-slate-900/60 backdrop-blur-md border border-white/40 dark:border-slate-700/40 rounded-full px-1.5 py-1.5 shadow-lg transition-all duration-300 hover:bg-white/70 dark:hover:bg-slate-900/80"
       >
         <div
           aria-hidden
@@ -58,12 +58,13 @@ export default function TopNav({ current }: { current: Current }) {
           {ITEMS.map((item, i) => (
             <Link
               key={item.key}
+              data-treasure-target={item.key === 'work' || item.key === 'favorites' ? item.key : undefined}
               ref={(el) => {
                 itemRefs.current[i] = el
               }}
               href={item.href}
               onMouseEnter={() => setHovered(i)}
-              className="px-4 py-1.5 rounded-full text-black dark:text-white text-sm transition-colors duration-200"
+              className="px-3 sm:px-4 py-1.5 rounded-full text-black dark:text-white text-xs sm:text-sm transition-colors duration-200 whitespace-nowrap"
             >
               {item.label}
             </Link>
@@ -75,7 +76,7 @@ export default function TopNav({ current }: { current: Current }) {
               }}
               onClick={logout}
               onMouseEnter={() => setHovered(ITEMS.length)}
-              className="px-4 py-1.5 rounded-full text-black dark:text-white hover:text-red-600 dark:hover:text-red-400 text-sm transition-colors duration-200"
+              className="px-3 sm:px-4 py-1.5 rounded-full text-black dark:text-white hover:text-red-600 dark:hover:text-red-400 text-xs sm:text-sm transition-colors duration-200 whitespace-nowrap"
             >
               Logout
             </button>

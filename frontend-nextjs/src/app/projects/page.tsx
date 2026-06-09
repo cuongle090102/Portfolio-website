@@ -148,6 +148,7 @@ const getTechColor = (tech: string, index: number): string => {
 export default function ProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [previewProject, setPreviewProject] = useState<Project | null>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -247,6 +248,7 @@ export default function ProjectsPage() {
   const fetchProjects = async () => {
     try {
       setLoading(true);
+      setLoadError(null);
       const response = await apiClient.getProjects();
       const publishedProjects = response.data.filter((project: Project) => 
         project.status === 'published' || project.status === 'completed'
@@ -258,6 +260,7 @@ export default function ProjectsPage() {
       }
     } catch (error) {
       console.error('Error fetching projects:', error);
+      setLoadError('Projects are temporarily unavailable because the API is not responding.');
     } finally {
       setLoading(false);
     }
@@ -283,17 +286,20 @@ export default function ProjectsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#000305] dark:bg-slate-950 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading projects...</p>
+      <div className="min-h-screen bg-[#000305] dark:bg-slate-950 flex items-center justify-center cinema-page-transition">
+        <div className="text-center motion-fade-up">
+          <div className="relative mx-auto h-14 w-14">
+            <div className="absolute inset-0 rounded-full border border-white/20" />
+            <div className="absolute inset-0 rounded-full border-b-2 border-white animate-spin" />
+          </div>
+          <p className="mt-5 text-sm uppercase tracking-[0.28em] text-gray-400">Loading projects</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-950 text-black dark:text-white page-transition transition-colors duration-300">
+    <div className="min-h-screen bg-white dark:bg-slate-950 text-black dark:text-white page-transition cinema-page-transition transition-colors duration-300">
       {/* Header Name */}
       <div className="absolute top-6 left-6 z-10">
         <Link href="/" className="text-2xl font-bold text-gray-900 dark:text-slate-100 tracking-tight hover:text-gray-600 dark:hover:text-gray-400 transition-colors">
@@ -311,8 +317,32 @@ export default function ProjectsPage() {
       <TopNav current="work" />
 
       {/* 3-Section Layout */}
-      <main className="h-screen flex" data-section="projects">
-        {projects.length === 0 ? (
+      <main className="h-screen flex cinema-surface" data-section="projects">
+        {loadError ? (
+          <div className="w-full flex items-center justify-center px-6">
+            <div className="cinema-panel motion-scale-in max-w-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-8 text-center">
+              <div className="cinema-eyebrow justify-center mb-5">Offline Preview</div>
+              <h2 className="text-3xl font-bold text-gray-900 dark:text-slate-100 mb-4">Project archive is not connected</h2>
+              <p className="text-gray-600 dark:text-slate-400 leading-relaxed mb-8">
+                {loadError} Start the backend API, then retry this page.
+              </p>
+              <div className="flex flex-col sm:flex-row justify-center gap-3">
+                <button
+                  onClick={fetchProjects}
+                  className="interactive-lift btn-shine bg-black dark:bg-white text-white dark:text-black px-6 py-3 text-sm font-medium"
+                >
+                  <span className="relative z-10">Retry</span>
+                </button>
+                <Link
+                  href="/"
+                  className="interactive-lift border border-black dark:border-white text-black dark:text-white px-6 py-3 text-sm font-medium hover:bg-black dark:hover:bg-white hover:text-white dark:hover:text-black"
+                >
+                  Back to Index
+                </Link>
+              </div>
+            </div>
+          </div>
+        ) : projects.length === 0 ? (
           <div className="w-full flex items-center justify-center">
             <div className="text-center">
               <div className="w-24 h-24 mx-auto bg-gray-100 dark:bg-slate-800 rounded-lg flex items-center justify-center mb-6">
@@ -334,13 +364,15 @@ export default function ProjectsPage() {
             <div className="w-1/4 flex flex-col pl-6">
               <div className="flex-1 flex items-center justify-center">
                 <div className="space-y-1">
+                  <div className="cinema-eyebrow mb-4">Archive</div>
                   <h2 className="text-xs md:text-sm font-medium text-gray-600 dark:text-slate-400 mb-2">
                     Selected work ({projects.length})
                   </h2>
                 {projects.map((project, index) => (
                   <div
                     key={project.id}
-                    className="cursor-pointer group transition-all duration-300"
+                    className="cursor-pointer group transition-all duration-300 motion-fade-up"
+                    style={{ animationDelay: `${120 + index * 45}ms` }}
                     onMouseEnter={() => setPreviewProject(project)}
                     onClick={() => setSelectedProject(project)}
                   >
@@ -367,7 +399,7 @@ export default function ProjectsPage() {
             {/* Section 2: Project Display */}
             <div className="w-1/2 flex flex-col items-center justify-center pt-20">
               <div
-                className={`relative w-full min-h-[300px] bg-gray-100 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 flex items-center justify-center rounded-lg overflow-hidden ${previewProject ? 'cursor-pointer group/preview' : ''}`}
+                className={`cinema-panel relative w-full min-h-[300px] bg-gray-100 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 flex items-center justify-center rounded-lg overflow-hidden transition-all duration-500 ${previewProject ? 'cursor-pointer group/preview hover:shadow-2xl hover:border-gray-300 dark:hover:border-slate-500' : ''}`}
                 onClick={() => previewProject && setSelectedProject(previewProject)}
               >
                 {previewProject ? (
@@ -377,7 +409,7 @@ export default function ProjectsPage() {
                         key={previewProject.id}
                         src={previewProject.image_url}
                         alt={previewProject.title}
-                        className="w-full h-auto max-h-[70vh] object-contain transition-all duration-500 ease-out rounded-lg group-hover/preview:scale-[1.02]"
+                        className="media-swap w-full h-auto max-h-[70vh] object-contain transition-all duration-500 ease-out rounded-lg group-hover/preview:scale-[1.02]"
                         style={{
                           minHeight: '300px',
                           backgroundColor: '#f9fafb'
@@ -426,7 +458,7 @@ export default function ProjectsPage() {
               
               {/* Project Info */}
               {previewProject && (
-                <div className="mt-6 space-y-4 text-center max-w-3xl">
+                <div key={previewProject.id} className="mt-6 space-y-4 text-center max-w-3xl motion-fade-up">
                   <p className="text-gray-600 dark:text-slate-400 leading-relaxed text-sm">
                     {previewProject.description}
                   </p>
@@ -453,7 +485,7 @@ export default function ProjectsPage() {
                         href={previewProject.demo_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center px-3 py-2 bg-gray-900 text-white text-xs font-medium hover:bg-gray-800 transition-colors duration-300"
+                        className="interactive-lift inline-flex items-center px-3 py-2 bg-gray-900 text-white text-xs font-medium hover:bg-gray-800 transition-colors duration-300"
                       >
                         <ArrowTopRightOnSquareIcon className="h-3 w-3 mr-1" />
                         Demo
@@ -464,7 +496,7 @@ export default function ProjectsPage() {
                         href={previewProject.github_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center px-3 py-2 border border-gray-900 text-gray-900 text-xs font-medium hover:bg-gray-900 hover:text-white transition-colors duration-300"
+                        className="interactive-lift inline-flex items-center px-3 py-2 border border-gray-900 text-gray-900 text-xs font-medium hover:bg-gray-900 hover:text-white transition-colors duration-300"
                       >
                         <CodeBracketIcon className="h-3 w-3 mr-1" />
                         Code
@@ -512,7 +544,7 @@ export default function ProjectsPage() {
       </main>
 
       {/* Theme Toggle — bottom left */}
-      <div className="fixed left-6 bottom-6 z-50">
+      <div className="fixed right-6 bottom-6 z-50">
         <div className="bg-white/70 dark:bg-slate-900/70 backdrop-blur-md border border-gray-200/50 dark:border-slate-700/50 rounded-full p-1.5 shadow-sm hover:shadow-md transition-all duration-300">
           <ThemeToggle />
         </div>
@@ -521,11 +553,11 @@ export default function ProjectsPage() {
       {/* Project Detail Modal */}
       {selectedProject && (
         <div 
-          className="fixed inset-0 bg-black/80 backdrop-blur-sm overflow-y-auto h-full w-full z-50"
+          className="fixed inset-0 bg-black/80 backdrop-blur-sm overflow-y-auto h-full w-full z-50 motion-soft-pop"
           onClick={() => setSelectedProject(null)}
         >
           <div 
-            className="relative top-4 md:top-20 mx-auto p-6 lg:p-8 border border-gray-300 dark:border-slate-600 w-full md:w-11/12 lg:w-5/6 xl:w-4/5 2xl:w-3/4 h-full md:h-auto shadow-2xl bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100"
+            className="relative top-4 md:top-20 mx-auto p-6 lg:p-8 border border-gray-300 dark:border-slate-600 w-full md:w-11/12 lg:w-5/6 xl:w-4/5 2xl:w-3/4 h-full md:h-auto shadow-2xl bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 motion-scale-in"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="mt-3">
@@ -535,7 +567,7 @@ export default function ProjectsPage() {
                 </div>
                 <button
                   onClick={() => setSelectedProject(null)}
-                  className="text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-gray-100 text-2xl md:text-3xl font-light ml-4 transition-colors duration-300"
+                  className="interactive-lift text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-gray-100 text-2xl md:text-3xl font-light ml-4 transition-colors duration-300"
                 >
                   ×
                 </button>

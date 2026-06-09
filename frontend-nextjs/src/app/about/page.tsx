@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useEffect, useState, useCallback } from 'react'
+import type { CSSProperties } from 'react'
 import ThemeToggle from '@/components/ThemeToggle'
 import TopNav from '@/components/TopNav'
 
@@ -125,14 +126,14 @@ export default function AboutPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-950 text-black dark:text-white page-transition transition-colors duration-300">
+    <div className="min-h-screen bg-white dark:bg-slate-950 text-black dark:text-white page-transition cinema-page-transition transition-colors duration-300">
       {/* Scroll Progress Bar */}
       <div className="scroll-progress" style={{ width: `${scrollProgress}%` }} />
 
       <TopNav current="about" />
 
       {/* Theme Toggle — bottom left */}
-      <div className="fixed left-6 bottom-6 z-50">
+      <div className="fixed right-6 bottom-6 z-50">
         <div className="bg-white/70 dark:bg-slate-900/70 backdrop-blur-md border border-gray-200/50 dark:border-slate-700/50 rounded-full p-1.5 shadow-sm hover:shadow-md transition-all duration-300">
           <ThemeToggle />
         </div>
@@ -154,30 +155,62 @@ export default function AboutPage() {
       </div>
 
       {/* Main Content */}
-      <main className="pt-32 pb-16">
-        {/* About Me */}
-        <section className="max-w-4xl mx-auto px-6 lg:px-8 mb-24" data-section="intro">
-          <div className={`transition-all duration-1000 ${isVisible.intro ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-            <h2 className="text-5xl md:text-6xl font-bold text-black dark:text-white mb-12 leading-tight">
-              About Me
-            </h2>
-            <p className="text-lg text-gray-700 dark:text-slate-300 leading-relaxed">
-              Computer Science graduate passionate about data engineering and analytics, with experience building scalable data infrastructure and translating complex datasets into clear, actionable business insights. Skilled in designing ETL pipelines, automating data workflows, and optimizing databases — while delivering BI dashboards and analytics that support data-driven decision-making and business growth.
-            </p>
+      <main className="pt-28 pb-12 cinema-surface">
+        {/* Profile Hero */}
+        <section className="max-w-7xl mx-auto px-6 lg:px-8 mb-12" data-section="intro">
+          <div className={`grid lg:grid-cols-[1.05fr_0.95fr] gap-10 lg:gap-12 items-center transition-all duration-1000 ${isVisible.intro ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+            <div>
+              <h1 className="cinema-eyebrow mb-6">Analytics Engineer</h1>
+              <p className="cinema-title text-xl md:text-2xl font-medium text-gray-800 dark:text-slate-200 leading-relaxed max-w-2xl mb-8">
+                I build trusted data pipelines, reusable models, and analytics products that help teams act with confidence.
+              </p>
+              <div className="grid min-[480px]:grid-cols-3 gap-2.5 max-w-3xl">
+                {[
+                  ['Focus', 'Analytics Engineering'],
+                  ['Base', 'Ho Chi Minh City'],
+                  ['Mode', 'Build + Measure'],
+                ].map(([label, value], index) => (
+                  <div
+                    key={label}
+                    className="cinema-panel border border-gray-200 dark:border-slate-700 bg-white/70 dark:bg-slate-900/70 backdrop-blur-md p-3.5"
+                    style={{ animationDelay: `${index * 90}ms` }}
+                  >
+                    <p className="text-[10px] uppercase tracking-[0.28em] text-gray-400 dark:text-slate-500 mb-2">{label}</p>
+                    <p className="text-sm font-semibold text-gray-900 dark:text-slate-100">{value}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="profile-signal cinema-panel hidden md:grid border border-gray-200 dark:border-slate-700 bg-gray-50/70 dark:bg-slate-900/70">
+              <div className="profile-signal-sweep" />
+              <span className="profile-signal-node" />
+              <span className="profile-signal-node" />
+              <span className="profile-signal-node" />
+              <div className="profile-signal-core">
+                <div className="text-center">
+                  <p className="text-[10px] uppercase tracking-[0.32em] text-gray-500 dark:text-slate-400 mb-3">Analytics</p>
+                  <p className="text-4xl font-bold text-gray-900 dark:text-white">CL</p>
+                  <p className="mt-3 text-xs text-gray-500 dark:text-slate-400">Pipelines | Models</p>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
         {/* Education & Certifications */}
-        <section className="py-24 bg-gray-50 dark:bg-slate-900 transition-colors duration-300" data-section="education">
+        <section id="credentials" className={`cinema-scroll-section py-16 bg-gray-50 dark:bg-slate-900 transition-colors duration-300 scroll-mt-24 ${isVisible.education ? 'is-visible' : ''}`} data-section="education">
           <div className="max-w-6xl mx-auto px-6 lg:px-8">
-            <div className={`mb-16 transition-all duration-1000 ${isVisible.education ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-              <h2 className="text-4xl font-bold text-black dark:text-white mb-4">Education & Certifications</h2>
+            <div className={`mb-10 transition-all duration-1000 ${isVisible.education ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+              <div className="cinema-eyebrow mb-5">Credentials</div>
+              <h2 className="cinema-title text-4xl font-bold text-black dark:text-white mb-4">Education & Certifications</h2>
             </div>
 
-            {/* Education */}
-            <div className={`mb-12 transition-all duration-1000 delay-200 ${isVisible.education ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-              <h3 className="text-sm font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-wider mb-6">Education</h3>
-              <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-8 card-hover">
+            <div className={`section-rail pl-6 ${isVisible.education ? 'is-visible' : ''}`}>
+              {/* Education */}
+              <div className={`timeline-entry mb-10 transition-all duration-1000 delay-200 ${isVisible.education ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+                <h3 className="text-sm font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-wider mb-6">Education</h3>
+                <div className="cinema-panel bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 card-hover">
                 <div className="flex flex-col md:flex-row md:items-start gap-6">
                   {/* University Logo */}
                   <div className="flex-shrink-0">
@@ -208,7 +241,7 @@ export default function AboutPage() {
                       </svg>
                       Ho Chi Minh City, Vietnam
                     </div>
-                    <p className="text-gray-600 dark:text-slate-400 text-sm leading-relaxed mb-4">
+                    <p className="text-gray-600 dark:text-slate-400 text-sm leading-relaxed mb-3">
                       Specialized program focusing on advanced computer science concepts, data structures, algorithms,
                       and theoretical principles.
                     </p>
@@ -223,19 +256,20 @@ export default function AboutPage() {
                   </div>
                 </div>
               </div>
-            </div>
+              </div>
 
-            {/* Certifications */}
-            <div className={`transition-all duration-1000 delay-500 ${isVisible.education ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-              <h3 className="text-sm font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-wider mb-6">Certifications</h3>
-              <div className="grid md:grid-cols-3 gap-5">
-                {certifications.map((cert) => (
+              {/* Certifications */}
+              <div className={`timeline-entry transition-all duration-1000 delay-500 ${isVisible.education ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+                <h3 className="text-sm font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-wider mb-6">Certifications</h3>
+                <div className="motion-stagger grid md:grid-cols-3 gap-4">
+                {certifications.map((cert, index) => (
                   <a
                     key={cert.title}
                     href={cert.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 hover:shadow-lg hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-300 flex flex-col card-hover"
+                    style={{ '--stagger-index': index } as CSSProperties}
+                    className="cinema-panel group bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-5 hover:shadow-lg hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-300 flex flex-col card-hover"
                   >
                     {/* Icon */}
                     <div className="w-10 h-10 bg-green-50 dark:bg-green-950 border border-green-100 dark:border-green-900 rounded-lg flex items-center justify-center mb-4">
@@ -251,7 +285,7 @@ export default function AboutPage() {
                     <h4 className="font-bold text-gray-900 dark:text-slate-100 mb-1">{cert.title}</h4>
                     <p className="text-sm text-green-600 dark:text-green-400 font-medium mb-1">{cert.subtitle}</p>
                     <p className="text-xs text-gray-400 dark:text-slate-500 mb-3">{cert.issuer}</p>
-                    <p className="text-sm text-gray-600 dark:text-slate-400 leading-relaxed flex-1">{cert.description}</p>
+                    <p className="text-xs text-gray-600 dark:text-slate-400 leading-relaxed flex-1">{cert.description}</p>
                     {/* Link indicator */}
                     <div className="flex items-center text-sm text-blue-600 dark:text-blue-400 font-medium mt-4 group-hover:text-blue-800 dark:group-hover:text-blue-300 transition-colors">
                       {cert.linkText}
@@ -261,34 +295,37 @@ export default function AboutPage() {
                     </div>
                   </a>
                 ))}
+                </div>
               </div>
             </div>
           </div>
         </section>
 
         {/* Technical Skills */}
-        <section className="py-24 bg-white dark:bg-slate-950 transition-colors duration-300" data-section="skills">
+        <section className={`cinema-scroll-section py-16 bg-white dark:bg-slate-950 transition-colors duration-300 ${isVisible.skills ? 'is-visible' : ''}`} data-section="skills">
           <div className="max-w-6xl mx-auto px-6 lg:px-8">
-            <div className={`mb-16 transition-all duration-1000 ${isVisible.skills ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-              <h2 className="text-4xl font-bold text-black dark:text-white mb-4">Technical Skills</h2>
+            <div className={`mb-10 transition-all duration-1000 ${isVisible.skills ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+              <div className="cinema-eyebrow mb-5">Toolkit</div>
+              <h2 className="cinema-title text-4xl font-bold text-black dark:text-white mb-4">Technical Skills</h2>
               <p className="text-lg text-gray-600 dark:text-slate-400">
                 A comprehensive toolkit for building robust data solutions and scalable applications.
               </p>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-8">
+            <div className="grid md:grid-cols-2 gap-6">
               {skillCategories.map((category, catIndex) => (
                 <div
                   key={category.title}
-                  className={`transition-all duration-1000 ${isVisible.skills ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+                  className={`skill-group pt-5 transition-all duration-1000 ${isVisible.skills ? 'is-visible opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
                   style={{ transitionDelay: `${200 + catIndex * 150}ms` }}
                 >
                   <h3 className="text-sm font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-wider mb-4">{category.title}</h3>
                   <div className="flex flex-wrap gap-3">
-                    {category.items.map((item) => (
+                    {category.items.map((item, itemIndex) => (
                       <div
                         key={item.name}
-                        className="hover-float group flex items-center gap-2.5 bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg px-4 py-2.5 hover:shadow-md hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-200"
+                        style={{ '--chip-index': itemIndex } as CSSProperties}
+                        className="skill-chip cinema-panel group flex items-center gap-2.5 bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg px-3.5 py-2 hover:shadow-md hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-200"
                       >
                         <img
                           src={item.logo}
@@ -309,11 +346,12 @@ export default function AboutPage() {
         </section>
 
         {/* Let's Connect */}
-        <section className="py-24 bg-gray-50 dark:bg-slate-900 transition-colors duration-300" data-section="contact">
+        <section className={`cinema-scroll-section py-16 bg-gray-50 dark:bg-slate-900 transition-colors duration-300 ${isVisible.contact ? 'is-visible' : ''}`} data-section="contact">
           <div className="max-w-4xl mx-auto px-6 lg:px-8">
             <div className={`transition-all duration-1000 ${isVisible.contact ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-              <h3 className="text-3xl font-bold text-black dark:text-white mb-8">Let's Connect</h3>
-              <p className="text-lg text-gray-700 dark:text-slate-300 leading-relaxed mb-8">
+              <div className="cinema-eyebrow mb-5">Contact</div>
+              <h3 className="cinema-title text-3xl font-bold text-black dark:text-white mb-6">Let's Connect</h3>
+              <p className="text-base text-gray-700 dark:text-slate-300 leading-relaxed mb-7 max-w-3xl">
                 I'm always interested in discussing data science challenges, software architecture,
                 or potential collaborations. Whether you have a project in mind or just want to chat
                 about the latest in ML and analytics, feel free to reach out.
@@ -334,7 +372,7 @@ export default function AboutPage() {
               </div>
 
               {/* Social Links */}
-              <div className="flex gap-6 mt-12">
+              <div className="flex gap-6 mt-8">
                 <a href="mailto:cle6565@gmail.com" className="text-gray-600 dark:text-slate-400 hover:text-black dark:hover:text-white transition-colors p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800" title="Email">
                   <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-.904.732-1.636 1.636-1.636h3.819l6.545 4.91 6.545-4.91h3.819A1.636 1.636 0 0 1 24 5.457z"/>
@@ -353,11 +391,15 @@ export default function AboutPage() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-white dark:bg-slate-950 border-t border-gray-200 dark:border-slate-800 transition-colors duration-300">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8 py-16">
+      <footer className="cinema-footer bg-white dark:bg-slate-950 border-t border-gray-200 dark:border-slate-800 transition-colors duration-300">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8 py-14">
           <div className="text-center">
-            <h3 className="text-black dark:text-white font-bold text-xl mb-6 tracking-tight">CUONG LE</h3>
-            <p className="text-gray-600 dark:text-slate-400 mb-12">Crafting intelligent solutions from complex data</p>
+            <div className="cinema-eyebrow justify-center mb-6">End Frame</div>
+            <h3 className="cinema-title text-black dark:text-white font-bold text-3xl md:text-4xl mb-5 tracking-tight">CUONG LE</h3>
+            <p className="text-gray-600 dark:text-slate-400 mb-10 max-w-xl mx-auto leading-relaxed">
+              Data enthusiast focused on clear thinking, practical systems, and useful analytical products.
+            </p>
+            <div className="cinema-footer-line text-gray-900 dark:text-white mb-10" />
             <div className="mt-12 pt-8 border-t border-gray-200 dark:border-slate-800">
               <p className="text-gray-500 text-sm">
                 © 2025 CUONG LE. Building the future with data.

@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useState, useRef, useEffect } from 'react'
+import type { CSSProperties } from 'react'
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
 import { apiClient } from '@/lib/api'
 import ThemeToggle from '@/components/ThemeToggle'
@@ -363,7 +364,7 @@ export default function FavoritesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-950 text-black dark:text-white transition-colors duration-300">
+    <div className="min-h-screen bg-white dark:bg-slate-950 text-black dark:text-white page-transition cinema-page-transition transition-colors duration-300">
       {/* Header Name */}
       <div className="absolute top-6 left-6 z-10">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-slate-100 tracking-tight">
@@ -381,17 +382,18 @@ export default function FavoritesPage() {
       <TopNav current="favorites" />
 
       {/* Theme Toggle — bottom left */}
-      <div className="fixed left-6 bottom-6 z-50">
+      <div className="fixed right-6 bottom-6 z-50">
         <div className="bg-white/70 dark:bg-slate-900/70 backdrop-blur-md border border-gray-200/50 dark:border-slate-700/50 rounded-full p-1.5 shadow-sm hover:shadow-md transition-all duration-300">
           <ThemeToggle />
         </div>
       </div>
 
       {/* Header */}
-      <section className="pt-32 pb-16">
+      <section className="pt-32 pb-16 cinema-surface">
         <div className="max-w-6xl mx-auto px-6 lg:px-8">
-          <div className="text-center">
-            <h1 className="text-6xl font-bold text-black dark:text-white mb-8 leading-tight">
+          <div className="text-center motion-fade-up">
+            <div className="cinema-eyebrow justify-center mb-6">Personal Canon</div>
+            <h1 className="cinema-title text-6xl font-bold text-black dark:text-white mb-8 leading-tight">
               My Favorites
             </h1>
             <p className="text-xl text-gray-700 dark:text-slate-300 max-w-3xl mx-auto leading-relaxed">
@@ -402,12 +404,12 @@ export default function FavoritesPage() {
       </section>
 
       {/* Tab Navigation */}
-      <div className="max-w-6xl mx-auto px-6 lg:px-8 pb-16">
+      <div id="favorites-content" className="max-w-6xl mx-auto px-6 lg:px-8 pb-16 scroll-mt-24">
         <div className="flex justify-center mb-16">
-          <div className="flex space-x-8">
+          <div className="flex space-x-8 motion-fade-up" style={{ animationDelay: '120ms' }}>
             <button
               onClick={() => setActiveTab('films')}
-              className={`py-3 px-6 font-medium transition-colors ${
+              className={`interactive-lift py-3 px-6 font-medium transition-colors ${
                 activeTab === 'films'
                   ? 'bg-black dark:bg-white text-white dark:text-black'
                   : 'border border-black dark:border-white text-black dark:text-white hover:bg-black dark:hover:bg-white hover:text-white dark:hover:text-black'
@@ -417,7 +419,7 @@ export default function FavoritesPage() {
             </button>
             <button
               onClick={() => setActiveTab('sports')}
-              className={`py-3 px-6 font-medium transition-colors ${
+              className={`interactive-lift py-3 px-6 font-medium transition-colors ${
                 activeTab === 'sports'
                   ? 'bg-black dark:bg-white text-white dark:text-black'
                   : 'border border-black dark:border-white text-black dark:text-white hover:bg-black dark:hover:bg-white hover:text-white dark:hover:text-black'
@@ -430,16 +432,16 @@ export default function FavoritesPage() {
 
         {/* Films Tab */}
         {activeTab === 'films' && (
-          <div className="relative">
+          <div className="grid lg:grid-cols-[3rem_1fr] gap-5 motion-scale-in">
             {/* Sidebar */}
-            <div className="fixed left-4 top-1/2 transform -translate-y-1/2 z-10">
+            <div className="relative z-10 order-2 lg:order-1">
               <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm border border-gray-200 dark:border-slate-700 p-1 rounded-full shadow-lg">
-                <div className="flex flex-col space-y-0">
+                <div className="flex lg:flex-col justify-center space-x-1 lg:space-x-0 lg:space-y-0">
                   {Object.keys(filmTiers).map((tier) => (
                     <button
                       key={tier}
                       onClick={() => setSelectedTier(tier)}
-                      className={`w-10 h-10 text-center rounded-full text-sm font-bold transition-all duration-200 ${
+                      className={`interactive-lift w-10 h-10 text-center rounded-full text-sm font-bold transition-all duration-200 ${
                         selectedTier === tier
                           ? 'bg-black text-white shadow-md scale-110'
                           : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-slate-300 hover:scale-105'
@@ -454,16 +456,16 @@ export default function FavoritesPage() {
             </div>
 
             {/* Main Content */}
-            <div className="flex-1">
+            <div className="order-1 lg:order-2 min-w-0">
               {selectedTier && filmTiers[selectedTier] && (
-                <div className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 overflow-hidden">
+                <div className="cinema-panel bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 overflow-hidden">
                   <div className={`${getTierColor(selectedTier)} px-6 py-4`}>
                     <h2 className={`text-2xl font-bold ${getTierTextColor(selectedTier)} tracking-wide`}>{selectedTier}</h2>
                   </div>
                   <div className="p-6">
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                    <div className="motion-stagger grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
                       {filmTiers[selectedTier].map((film, index) => (
-                        <div key={index} className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 overflow-hidden hover:shadow-lg transition-all duration-300 hover:scale-105">
+                        <div key={index} style={{ '--stagger-index': index } as CSSProperties} className="cinema-panel interactive-lift bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 overflow-hidden hover:shadow-lg transition-all duration-300 hover:scale-105">
                           <div className="aspect-[3/4] bg-gray-200 dark:bg-slate-800 flex items-center justify-center">
                             <img
                               src={film.poster}
@@ -504,16 +506,16 @@ export default function FavoritesPage() {
 
         {/* Sports Tab */}
         {activeTab === 'sports' && (
-          <div className="relative">
+          <div className="grid lg:grid-cols-[3rem_1fr] gap-5 motion-scale-in">
             {/* Sidebar */}
-            <div className="fixed left-4 top-1/2 transform -translate-y-1/2 z-10">
+            <div className="relative z-10 order-2 lg:order-1">
               <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm border border-gray-200 dark:border-slate-700 p-1 rounded-full shadow-lg">
-                <div className="flex flex-col space-y-0">
+                <div className="flex lg:flex-col justify-center space-x-1 lg:space-x-0 lg:space-y-0">
                   {Object.keys(athleteTiers).map((tier) => (
                     <button
                       key={tier}
                       onClick={() => setSelectedSportsTier(tier)}
-                      className={`w-10 h-10 text-center rounded-full text-sm font-bold transition-all duration-200 ${
+                      className={`interactive-lift w-10 h-10 text-center rounded-full text-sm font-bold transition-all duration-200 ${
                         selectedSportsTier === tier
                           ? 'bg-black text-white shadow-md scale-110'
                           : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-slate-300 hover:scale-105'
@@ -528,16 +530,16 @@ export default function FavoritesPage() {
             </div>
 
             {/* Main Content */}
-            <div className="flex-1">
+            <div className="order-1 lg:order-2 min-w-0">
               {selectedSportsTier && athleteTiers[selectedSportsTier] && (
-                <div className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 overflow-hidden">
+                <div className="cinema-panel bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 overflow-hidden">
                   <div className={`${getTierColor(selectedSportsTier)} px-6 py-4`}>
                     <h2 className={`text-2xl font-bold ${getTierTextColor(selectedSportsTier)} tracking-wide`}>{selectedSportsTier}</h2>
                   </div>
                   <div className="p-6">
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                    <div className="motion-stagger grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
                       {athleteTiers[selectedSportsTier].map((athlete, index) => (
-                        <div key={index} className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 overflow-hidden hover:shadow-lg transition-all duration-300 hover:scale-105">
+                        <div key={index} style={{ '--stagger-index': index } as CSSProperties} className="cinema-panel interactive-lift bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 overflow-hidden hover:shadow-lg transition-all duration-300 hover:scale-105">
                           <div className="aspect-square bg-gray-200 dark:bg-slate-800 flex items-center justify-center">
                             <img
                               src={athlete.photo}
@@ -584,6 +586,25 @@ export default function FavoritesPage() {
           </div>
         )}
       </div>
+
+      <footer className="cinema-footer bg-white dark:bg-slate-950 border-t border-gray-200 dark:border-slate-800 transition-colors duration-300">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8 py-20">
+          <div className="text-center">
+            <div className="cinema-eyebrow justify-center mb-6">End Frame</div>
+            <h3 className="cinema-title text-black dark:text-white font-bold text-3xl md:text-4xl mb-5 tracking-tight">CUONG LE</h3>
+            <p className="text-gray-600 dark:text-slate-400 mb-10 max-w-xl mx-auto leading-relaxed">
+              A small archive of taste, influences, and the stories that shape how I build.
+            </p>
+            <div className="cinema-footer-line text-gray-900 dark:text-white mb-10" />
+            <Link
+              href="/"
+              className="interactive-lift btn-shine inline-flex items-center justify-center px-8 py-4 bg-black dark:bg-white text-white dark:text-black font-medium hover:bg-gray-900 dark:hover:bg-gray-200 transition-all duration-300"
+            >
+              <span className="relative z-10">Back to Index</span>
+            </Link>
+          </div>
+        </div>
+      </footer>
     </div>
   )
 }
