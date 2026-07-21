@@ -93,10 +93,10 @@ export default function FavoritesPage() {
         poster: 'https://m.media-amazon.com/images/I/91Cuue1duOL._SL1500_.jpg'
       },
       { 
-        title: 'Mouse', 
-        year: 2021, 
-        genre: 'Thriller/Crime',
-        poster: 'https://m.media-amazon.com/images/I/51pL4ROwmgS._SX300_SY300_QL70_FMwebp_.jpg'
+        title: 'Cure',
+        year: 1997,
+        genre: 'Psychological Horror',
+        poster: 'https://upload.wikimedia.org/wikipedia/en/thumb/b/bc/Cureposter.jpg/250px-Cureposter.jpg'
       },
       { 
         title: 'Inception', 
@@ -155,6 +155,12 @@ export default function FavoritesPage() {
         year: 1997, 
         genre: 'Animation/Adventure',
         poster: 'https://m.media-amazon.com/images/M/MV5BNGIzY2IzODQtNThmMi00ZDE4LWI5YzAtNzNlZTM1ZjYyYjUyXkEyXkFqcGdeQXVyODEzNjM5OTQ@._V1_SX300.jpg'
+      },
+      { 
+        title: 'Mouse', 
+        year: 2021, 
+        genre: 'Thriller/Crime',
+        poster: 'https://m.media-amazon.com/images/I/51pL4ROwmgS._SX300_SY300_QL70_FMwebp_.jpg'
       },
       { 
         title: 'Memories of Murder', 

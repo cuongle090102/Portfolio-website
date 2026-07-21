@@ -424,11 +424,27 @@ export const mockFavorites = {
         "poster": "https://m.media-amazon.com/images/M/MV5BMTY4NzcwODg3Nl5BMl5BanBnXkFtZTcwNTEwOTMyMw@@._V1_SX300.jpg"
       },
       {
+        "id": 9,
+        "title": "Cure",
+        "year": 1997,
+        "genre": "Psychological Horror",
+        "poster": "https://upload.wikimedia.org/wikipedia/en/thumb/b/bc/Cureposter.jpg/250px-Cureposter.jpg"
+      },
+      {
         "id": 4,
         "title": "Inception",
         "year": 2010,
         "genre": "Sci-Fi/Thriller",
         "poster": "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_SX300.jpg"
+      }
+    ],
+    "B-Tier (Great)": [
+      {
+        "id": 10,
+        "title": "Mouse",
+        "year": 2021,
+        "genre": "Thriller/Crime",
+        "poster": "https://m.media-amazon.com/images/I/51pL4ROwmgS._SX300_SY300_QL70_FMwebp_.jpg"
       }
     ]
   },
